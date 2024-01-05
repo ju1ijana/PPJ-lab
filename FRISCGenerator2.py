@@ -31,6 +31,7 @@ def extract_pj():
                 pj.append('')
             pj[-1] += line.split(' ')[2]
 
+# preuzeto sa https://stackoverflow.com/questions/41164797/method-to-convert-infix-to-reverse-polish-notationpostfix
 def toRpn(infixStr):
     tokens = re.split(r' *([\+\-\*\^/]) *', infixStr)
     tokens = [t for t in reversed(tokens) if t != '']
@@ -51,12 +52,8 @@ def toRpn(infixStr):
 
 def declare(rpn):
     if len(rpn.split(' ')) == 1:  # imamo samo slučaj pridruživanja konstante varijabli
-        # MOVE %D 3, R0
-        # PUSH R0
         print('\tMOVE %D ' + rpn + ', R0', sep='')
         print('\tPUSH R0')
-        # POP R0
-        # STORE R0, (V0)
         print('\tPOP R0')
         print('\tSTORE R0, (' + var + str(in_a_loop) + ')', sep='')
 
@@ -76,27 +73,25 @@ def prepare_param_var(param):
     print('\tPUSH R0')
     return
 
+# preuzeto sa https://www.geeksforgeeks.org/evaluate-the-value-of-an-arithmetic-expression-in-reverse-polish-notation-in-python/
 def evaluate(expression):
     expression = expression.split()
     stack = []
-    #print(expression)
-    #print(stack)
 
     for ele in expression:
-        #print(stack)
         if ele not in '/*+-':
             stack.append(ele)
         else:
             right = stack.pop()
             left = stack.pop()
 
-            if left.isdigit(): #or left == 'result':
+            if left.isdigit():
                 prepare_param_num(left)
             else:
                 if left != 'result':
                     prepare_param_var(left)
 
-            if right.isdigit():# or right == 'result':
+            if right.isdigit():
                 prepare_param_num(right)
             else:
                 if right != 'result':
@@ -120,7 +115,6 @@ def evaluate(expression):
             elif ele == '/':
                 print('\tCALL DIV')
                 stack.append('result')
-    #return stack.pop()
 
 
 extract_pj()
@@ -161,10 +155,10 @@ for i in range(1, len(data)):
                 print('\tPUSH R2')
                 print('\tPOP R0')
                 print('\tSTORE R0, (' + var + str(in_a_loop) + ')', sep='')
-
             else:
                 rpn = toRpn(pj[int(row) - 1].split('=')[1].strip())
                 declare(rpn)
+            # fakat ne znam
             if in_a_loop > min(dictionary[var].keys()):
                 print("koristenje varijable", var)
 
@@ -185,23 +179,8 @@ for i in range(1, len(data)):
             print_variables.append('do' + str(in_a_loop) + ' DW 0')
             dos['do' + str(in_a_loop)] = pj[int(row) - 1].split('do')[1].strip() # spremamo do vrijednost za kasnije
 
-    '''if data[i - 1] == '<P>' and data[i].find('IDN') != -1:
-        var = data[i].split(' ')[2]
-        row = data[i].split(' ')[1]
-        print("koristenje varijable", var)
-        if var in dictionary:
-            if len(list(dictionary[var].keys())) == 0 or dictionary[var][list(dictionary[var].keys())[-1]] == row:
-                print("err ", row, " ", var, sep='')
-                exit(0)
-            print(row, " ", dictionary[var][list(dictionary[var].keys())[-1]], " ", var, sep='')
-        else:
-            print("err ", row, " ", var, sep='')
-            exit(0)'''
 
-
-#LOAD R6, (V1)
 print('\tLOAD R6, (rez0)')
-
 print('\tHALT\n')
 
 for v in print_variables:
@@ -212,5 +191,4 @@ for c in content:
     print(c)
 
 sys.stdout.close()
-
 
