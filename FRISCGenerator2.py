@@ -14,12 +14,13 @@ print_variables = []
 
 data = sys.stdin.read().split("\n")
 
-#data = ['<program>', ' <lista_naredbi>', '  <naredba>', '   <naredba_pridruzivanja>', '    IDN 1 rez', '    OP_PRIDRUZI 1 =', '    <E>', '     <T>', '      <P>', '       BROJ 1 17', '      <T_lista>', '       OP_DIJELI 1 /', '       <T>', '        <P>', '         BROJ 1 8', '        <T_lista>', '         $', '     <E_lista>', '      $', '  <lista_naredbi>', '   $']
+#data = ['<program>', ' <lista_naredbi>', '  <naredba>', '   <naredba_pridruzivanja>', '    IDN 1 x', '    OP_PRIDRUZI 1 =', '    <E>', '     <T>', '      <P>', '       BROJ 1 12', '      <T_lista>', '       $', '     <E_lista>', '      $', '  <lista_naredbi>', '   <naredba>', '    <naredba_pridruzivanja>', '     IDN 2 rez', '     OP_PRIDRUZI 2 =', '     <E>', '      <T>', '       <P>', '        IDN 2 x', '       <T_lista>', '        OP_PUTA 2 *', '        <T>', '         <P>', '          IDN 2 x', '         <T_lista>', '          $', '      <E_lista>', '       OP_PLUS 2 +', '       <E>', '        <T>', '         <P>', '          BROJ 2 5', '         <T_lista>', '          $', '        <E_lista>', '         $', '   <lista_naredbi>', '    $']
 
 data.pop()
 
 for index, element in enumerate(data):
     data[index] = element.strip()
+in_a_loop = 0
 
 # izdvajanje pj kôda iz sintaksnog stabla
 pj = ['']
@@ -57,21 +58,36 @@ def prepare_param_num(param):
     print('\tPUSH R0')
     return
 
+def prepare_param_var(param):
+    print('\tLOAD R0, (' + param + str(in_a_loop) + ')')
+    print('\tPUSH R0')
+    return
+
 def evaluate(expression):
     expression = expression.split()
     stack = []
+    #print(expression)
+    #print(stack)
 
     for ele in expression:
+        #print(stack)
         if ele not in '/*+-':
             stack.append(ele)
         else:
             right = stack.pop()
             left = stack.pop()
 
-            if left.isdigit():
+            if left.isdigit(): #or left == 'result':
                 prepare_param_num(left)
-            if right.isdigit():
+            else:
+                if left != 'result':
+                    prepare_param_var(left)
+
+            if right.isdigit():# or right == 'result':
                 prepare_param_num(right)
+            else:
+                if right != 'result':
+                    prepare_param_var(right)
 
             if ele == '+':
                 print('\tPOP R0')
@@ -97,7 +113,7 @@ def evaluate(expression):
 extract_pj()
 
 dictionary = {}
-in_a_loop = 0
+
 
 for i in range(1, len(data)):
     if data[i - 1] == '<za_petlja>':
