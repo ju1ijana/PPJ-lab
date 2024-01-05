@@ -8,13 +8,10 @@ content = ['MD_SGN\tMOVE 0, R6', '\tXOR R0, 0, R0', '\tJP_P MD_TST1', '\tXOR R0,
 
 print("\tMOVE 40000, R7 ; init stog\n")
 
-
-
 print_variables = []
 
 data = sys.stdin.read().split("\n")
-
-#data = ['<program>', ' <lista_naredbi>', '  <naredba>', '   <naredba_pridruzivanja>', '    IDN 1 x', '    OP_PRIDRUZI 1 =', '    <E>', '     <T>', '      <P>', '       BROJ 1 12', '      <T_lista>', '       $', '     <E_lista>', '      $', '  <lista_naredbi>', '   <naredba>', '    <naredba_pridruzivanja>', '     IDN 2 rez', '     OP_PRIDRUZI 2 =', '     <E>', '      <T>', '       <P>', '        IDN 2 x', '       <T_lista>', '        OP_PUTA 2 *', '        <T>', '         <P>', '          IDN 2 x', '         <T_lista>', '          $', '      <E_lista>', '       OP_PLUS 2 +', '       <E>', '        <T>', '         <P>', '          BROJ 2 5', '         <T_lista>', '          $', '        <E_lista>', '         $', '   <lista_naredbi>', '    $']
+#data = ['<program>', ' <lista_naredbi>', '  <naredba>', '   <naredba_pridruzivanja>', '    IDN 1 n', '    OP_PRIDRUZI 1 =', '    <E>', '     <T>', '      <P>', '       BROJ 1 12', '      <T_lista>', '       $', '     <E_lista>', '      $', '  <lista_naredbi>', '   <naredba>', '    <naredba_pridruzivanja>', '     IDN 2 rez', '     OP_PRIDRUZI 2 =', '     <E>', '      <T>', '       <P>', '        BROJ 2 0', '       <T_lista>', '        $', '      <E_lista>', '       $', '   <lista_naredbi>', '    <naredba>', '     <za_petlja>', '      KR_ZA 3 za', '      IDN 3 i', '      KR_OD 3 od', '      <E>', '       <T>', '        <P>', '         BROJ 3 1', '        <T_lista>', '         $', '       <E_lista>', '        $', '      KR_DO 3 do', '      <E>', '       <T>', '        <P>', '         IDN 3 n', '        <T_lista>', '         $', '       <E_lista>', '        $', '      <lista_naredbi>', '       <naredba>', '        <naredba_pridruzivanja>', '         IDN 4 rez', '         OP_PRIDRUZI 4 =', '         <E>', '          <T>', '           <P>', '            IDN 4 rez', '           <T_lista>', '            $', '          <E_lista>', '           OP_PLUS 4 +', '           <E>', '            <T>', '             <P>', '              IDN 4 i', '             <T_lista>', '              $', '            <E_lista>', '             $', '       <lista_naredbi>', '        $', '      KR_AZ 5 az', '    <lista_naredbi>', '     $']
 
 data.pop()
 
@@ -51,6 +48,22 @@ def toRpn(infixStr):
         return rpn
 
     return toRpn2(tokens, 0)
+
+def declare(rpn):
+    if len(rpn.split(' ')) == 1:  # imamo samo slučaj pridruživanja konstante varijabli
+        # MOVE %D 3, R0
+        # PUSH R0
+        print('\tMOVE %D ' + rpn + ', R0', sep='')
+        print('\tPUSH R0')
+        # POP R0
+        # STORE R0, (V0)
+        print('\tPOP R0')
+        print('\tSTORE R0, (' + var + str(in_a_loop) + ')', sep='')
+
+    else:
+        evaluate(rpn)
+        print('\tPOP R0')
+        print('\tSTORE R0, (' + var + str(in_a_loop) + ')', sep='')
 
 
 def prepare_param_num(param):
@@ -114,6 +127,8 @@ extract_pj()
 
 dictionary = {}
 
+dos = {} # dict za spremanje do vrijednosti petlje -> ključ je do_ (_ je in_a_loop), a vrijednost je string npr i * i (za j od 0 do i*i)
+
 
 for i in range(1, len(data)):
     if data[i - 1] == '<za_petlja>':
@@ -125,7 +140,7 @@ for i in range(1, len(data)):
                 if key2 == in_a_loop:
                     dictionary[key].pop(key2)
         in_a_loop -= 1
-    if data[i - 1] == '<naredba_pridruzivanja>' or data[i - 1].find('KR_ZA') != -1:
+    if data[i - 1] == '<naredba_pridruzivanja>':
         var = data[i].split(' ')[2]
         row = data[i].split(' ')[1]
         if in_a_loop and data[i - 1].find('KR_ZA') == -1:
@@ -149,22 +164,40 @@ for i in range(1, len(data)):
 
             else:
                 rpn = toRpn(pj[int(row) - 1].split('=')[1].strip())
-                #print(rpn)
+                declare(rpn)
+            if in_a_loop > min(dictionary[var].keys()):
+                print("koristenje varijable", var)
 
-                if len(rpn.split(' ')) == 1:   # imamo samo slučaj pridruživanja konstante varijabli
-                    # MOVE %D 3, R0
-                    # PUSH R0
-                    print('\tMOVE %D ' + rpn + ', R0', sep='')
-                    print('\tPUSH R0')
-                    # POP R0
-                    # STORE R0, (V0)
-                    print('\tPOP R0')
-                    print('\tSTORE R0, (' + var + str(in_a_loop) + ')', sep='')
+    if data[i - 1].find('KR_ZA') != -1:
+        var = data[i].split(' ')[2]
+        row = data[i].split(' ')[1]
+        if in_a_loop and data[i - 1].find('KR_ZA') == -1:
+            if var in dictionary:
+                continue
+        if var not in dictionary:
+            dictionary[var] = {}
+        if in_a_loop not in dictionary[var]:
+            dictionary[var][in_a_loop] = row
+            print_variables.append(var + str(in_a_loop) + ' DW 0')
+            rpn = toRpn(pj[int(row) - 1].split('od')[1].strip().split('do')[0].strip())
+            declare(rpn)
 
-                else:
-                    evaluate(rpn)
-                    print('\tPOP R0')
-                    print('\tSTORE R0, (' + var + str(in_a_loop) + ')', sep='')
+            print_variables.append('do' + str(in_a_loop) + ' DW 0')
+            dos['do' + str(in_a_loop)] = pj[int(row) - 1].split('do')[1].strip() # spremamo do vrijednost za kasnije
+
+    '''if data[i - 1] == '<P>' and data[i].find('IDN') != -1:
+        var = data[i].split(' ')[2]
+        row = data[i].split(' ')[1]
+        print("koristenje varijable", var)
+        if var in dictionary:
+            if len(list(dictionary[var].keys())) == 0 or dictionary[var][list(dictionary[var].keys())[-1]] == row:
+                print("err ", row, " ", var, sep='')
+                exit(0)
+            print(row, " ", dictionary[var][list(dictionary[var].keys())[-1]], " ", var, sep='')
+        else:
+            print("err ", row, " ", var, sep='')
+            exit(0)'''
+
 
 #LOAD R6, (V1)
 print('\tLOAD R6, (rez0)')
