@@ -20,7 +20,7 @@ print("\tMOVE 40000, R7 ; init stog\n")
 print_variables = []
 
 data = sys.stdin.read().split("\n")
-#data = ['<program>', ' <lista_naredbi>', '  <naredba>', '   <naredba_pridruzivanja>', '    IDN 1 rez', '    OP_PRIDRUZI 1 =', '    <E>', '     <T>', '      <P>', '       BROJ 1 12', '      <T_lista>', '       $', '     <E_lista>', '      $', '  <lista_naredbi>', '   <naredba>', '    <za_petlja>', '     KR_ZA 2 za', '     IDN 2 i', '     KR_OD 2 od', '     <E>', '      <T>', '       <P>', '        BROJ 2 1', '       <T_lista>', '        $', '      <E_lista>', '       $', '     KR_DO 2 do', '     <E>', '      <T>', '       <P>', '        BROJ 2 5', '       <T_lista>', '        $', '      <E_lista>', '       $', '     <lista_naredbi>', '      <naredba>', '       <naredba_pridruzivanja>', '        IDN 3 rez', '        OP_PRIDRUZI 3 =', '        <E>', '         <T>', '          <P>', '           IDN 3 rez', '          <T_lista>', '           $', '         <E_lista>', '          OP_PLUS 3 +', '          <E>', '           <T>', '            <P>', '             IDN 3 i', '            <T_lista>', '             $', '           <E_lista>', '            OP_MINUS 3 -', '            <E>', '             <T>', '              <P>', '               BROJ 3 2', '              <T_lista>', '               $', '             <E_lista>', '              OP_PLUS 3 +', '              <E>', '               <T>', '                <P>', '                 BROJ 3 15', '                <T_lista>', '                 $', '               <E_lista>', '                OP_MINUS 3 -', '                <E>', '                 <T>', '                  <P>', '                   IDN 3 i', '                  <T_lista>', '                   OP_PUTA 3 *', '                   <T>', '                    <P>', '                     IDN 3 i', '                    <T_lista>', '                     $', '                 <E_lista>', '                  OP_MINUS 3 -', '                  <E>', '                   <T>', '                    <P>', '                     IDN 3 i', '                    <T_lista>', '                     $', '                   <E_lista>', '                    $', '      <lista_naredbi>', '       $', '     KR_AZ 4 az', '   <lista_naredbi>', '    $']
+#data = ['<program>', ' <lista_naredbi>', '  <naredba>', '   <naredba_pridruzivanja>', '    IDN 1 n', '    OP_PRIDRUZI 1 =', '    <E>', '     <T>', '      <P>', '       BROJ 1 12', '      <T_lista>', '       $', '     <E_lista>', '      $', '  <lista_naredbi>', '   <naredba>', '    <naredba_pridruzivanja>', '     IDN 2 rez', '     OP_PRIDRUZI 2 =', '     <E>', '      <T>', '       <P>', '        BROJ 2 0', '       <T_lista>', '        $', '      <E_lista>', '       $', '   <lista_naredbi>', '    <naredba>', '     <za_petlja>', '      KR_ZA 3 za', '      IDN 3 i', '      KR_OD 3 od', '      <E>', '       <T>', '        <P>', '         BROJ 3 1', '        <T_lista>', '         $', '       <E_lista>', '        $', '      KR_DO 3 do', '      <E>', '       <T>', '        <P>', '         IDN 3 n', '        <T_lista>', '         $', '       <E_lista>', '        $', '      <lista_naredbi>', '       <naredba>', '        <naredba_pridruzivanja>', '         IDN 4 rez', '         OP_PRIDRUZI 4 =', '         <E>', '          <T>', '           <P>', '            IDN 4 rez', '           <T_lista>', '            $', '          <E_lista>', '           OP_PLUS 4 +', '           <E>', '            <T>', '             <P>', '              IDN 4 i', '             <T_lista>', '              $', '            <E_lista>', '             $', '       <lista_naredbi>', '        $', '      KR_AZ 5 az', '    <lista_naredbi>', '     $']
 
 data.pop()
 
@@ -180,11 +180,16 @@ for i, line in enumerate(pj):
         # računamo vrijednost do i računamo da se nalazi na stogu
         do = dos['do' + str(in_a_loop)]
         rpn = toRpn(do)
-        if len(rpn.split(' ')) == 1:  # imamo samo slučaj pridruživanja konstante varijabli
+        if len(rpn.split(' ')) == 1 and rpn.isdigit():  # imamo samo slučaj pridruživanja konstante varijabli
             print('\tMOVE %D ' + rpn + ', R0', sep='')
             print('\tPUSH R0')
+
         else:
-            evaluate(rpn)
+            if len(rpn) == 1:
+                print('\tLOAD R0, (' + [element for element in variables if element.startswith(do)][-1] + ')')
+                print('\tPUSH R0')
+            else:
+                evaluate(rpn)
         # na stog stavimo i brojač
         print('\tLOAD R0, (' + counter + ')')
         print('\tPOP R1')
