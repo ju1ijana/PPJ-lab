@@ -11,7 +11,7 @@ print("\tMOVE 40000, R7 ; init stog\n")
 print_variables = []
 
 data = sys.stdin.read().split("\n")
-#data = ['<program>', ' <lista_naredbi>', '  <naredba>', '   <naredba_pridruzivanja>', '    IDN 1 n', '    OP_PRIDRUZI 1 =', '    <E>', '     <T>', '      <P>', '       BROJ 1 12', '      <T_lista>', '       $', '     <E_lista>', '      $', '  <lista_naredbi>', '   <naredba>', '    <naredba_pridruzivanja>', '     IDN 2 rez', '     OP_PRIDRUZI 2 =', '     <E>', '      <T>', '       <P>', '        BROJ 2 0', '       <T_lista>', '        $', '      <E_lista>', '       $', '   <lista_naredbi>', '    <naredba>', '     <za_petlja>', '      KR_ZA 3 za', '      IDN 3 i', '      KR_OD 3 od', '      <E>', '       <T>', '        <P>', '         BROJ 3 1', '        <T_lista>', '         $', '       <E_lista>', '        $', '      KR_DO 3 do', '      <E>', '       <T>', '        <P>', '         IDN 3 n', '        <T_lista>', '         $', '       <E_lista>', '        $', '      <lista_naredbi>', '       <naredba>', '        <naredba_pridruzivanja>', '         IDN 4 rez', '         OP_PRIDRUZI 4 =', '         <E>', '          <T>', '           <P>', '            IDN 4 rez', '           <T_lista>', '            $', '          <E_lista>', '           OP_PLUS 4 +', '           <E>', '            <T>', '             <P>', '              IDN 4 i', '             <T_lista>', '              $', '            <E_lista>', '             $', '       <lista_naredbi>', '        $', '      KR_AZ 5 az', '    <lista_naredbi>', '     $']
+#data = ['<program>', ' <lista_naredbi>', '  <naredba>', '   <naredba_pridruzivanja>', '    IDN 1 x', '    OP_PRIDRUZI 1 =', '    <E>', '     <T>', '      <P>', '       BROJ 1 13', '      <T_lista>', '       $', '     <E_lista>', '      $', '  <lista_naredbi>', '   <naredba>', '    <naredba_pridruzivanja>', '     IDN 2 y', '     OP_PRIDRUZI 2 =', '     <E>', '      <T>', '       <P>', '        BROJ 2 14', '       <T_lista>', '        $', '      <E_lista>', '       $', '   <lista_naredbi>', '    <naredba>', '     <naredba_pridruzivanja>', '      IDN 3 z', '      OP_PRIDRUZI 3 =', '      <E>', '       <T>', '        <P>', '         IDN 3 x', '        <T_lista>', '         $', '       <E_lista>', '        OP_PLUS 3 +', '        <E>', '         <T>', '          <P>', '           IDN 3 y', '          <T_lista>', '           $', '         <E_lista>', '          OP_MINUS 3 -', '          <E>', '           <T>', '            <P>', '             BROJ 3 13', '            <T_lista>', '             $', '           <E_lista>', '            $', '    <lista_naredbi>', '     <naredba>', '      <naredba_pridruzivanja>', '       IDN 4 w', '       OP_PRIDRUZI 4 =', '       <E>', '        <T>', '         <P>', '          IDN 4 x', '         <T_lista>', '          $', '        <E_lista>', '         OP_PLUS 4 +', '         <E>', '          <T>', '           <P>', '            IDN 4 y', '           <T_lista>', '            $', '          <E_lista>', '           OP_PLUS 4 +', '           <E>', '            <T>', '             <P>', '              IDN 4 z', '             <T_lista>', '              $', '            <E_lista>', '             $', '     <lista_naredbi>', '      <naredba>', '       <naredba_pridruzivanja>', '        IDN 5 rez', '        OP_PRIDRUZI 5 =', '        <E>', '         <T>', '          <P>', '           BROJ 5 2', '          <T_lista>', '           OP_PUTA 5 *', '           <T>', '            <P>', '             IDN 5 x', '            <T_lista>', '             $', '         <E_lista>', '          OP_PLUS 5 +', '          <E>', '           <T>', '            <P>', '             IDN 5 y', '            <T_lista>', '             $', '           <E_lista>', '            OP_PLUS 5 +', '            <E>', '             <T>', '              <P>', '               IDN 5 z', '              <T_lista>', '               $', '             <E_lista>', '              OP_PLUS 5 +', '              <E>', '               <T>', '                <P>', '                 IDN 5 w', '                <T_lista>', '                 $', '               <E_lista>', '                $', '      <lista_naredbi>', '       <naredba>', '        <naredba_pridruzivanja>', '         IDN 6 rez', '         OP_PRIDRUZI 6 =', '         <E>', '          <T>', '           <P>', '            IDN 6 rez', '           <T_lista>', '            $', '          <E_lista>', '           OP_MINUS 6 -', '           <E>', '            <T>', '             <P>', '              BROJ 6 2', '             <T_lista>', '              OP_PUTA 6 *', '              <T>', '               <P>', '                IDN 6 x', '               <T_lista>', '                $', '            <E_lista>', '             $', '       <lista_naredbi>', '        <naredba>', '         <naredba_pridruzivanja>', '          IDN 7 rez', '          OP_PRIDRUZI 7 =', '          <E>', '           <T>', '            <P>', '             IDN 7 rez', '            <T_lista>', '             $', '           <E_lista>', '            OP_MINUS 7 -', '            <E>', '             <T>', '              <P>', '               IDN 7 y', '              <T_lista>', '               $', '             <E_lista>', '              $', '        <lista_naredbi>', '         <naredba>', '          <naredba_pridruzivanja>', '           IDN 8 rez', '           OP_PRIDRUZI 8 =', '           <E>', '            <T>', '             <P>', '              IDN 8 rez', '             <T_lista>', '              $', '            <E_lista>', '             OP_MINUS 8 -', '             <E>', '              <T>', '               <P>', '                IDN 8 z', '               <T_lista>', '                $', '              <E_lista>', '               $', '         <lista_naredbi>', '          <naredba>', '           <naredba_pridruzivanja>', '            IDN 9 rez', '            OP_PRIDRUZI 9 =', '            <E>', '             <T>', '              <P>', '               IDN 9 rez', '              <T_lista>', '               $', '             <E_lista>', '              OP_PLUS 9 +', '              <E>', '               <T>', '                <P>', '                 IDN 9 w', '                <T_lista>', '                 $', '               <E_lista>', '                $', '          <lista_naredbi>', '           $']
 
 data.pop()
 
@@ -79,6 +79,7 @@ def evaluate(expression):
     stack = []
 
     for ele in expression:
+        #print(stack)
         if ele not in '/*+-':
             stack.append(ele)
         else:
@@ -104,9 +105,13 @@ def evaluate(expression):
                 print('\tPUSH R2')
                 stack.append('result')
             elif ele == '-':
+                #print("left:", left, "right:", right)
                 print('\tPOP R0')
                 print('\tPOP R1')
-                print('\tSUB R1, R0, R2')
+                if right == 'result':
+                    print('\tSUB R0, R1, R2')
+                else:
+                    print('\tSUB R1, R0, R2')
                 print('\tPUSH R2')
                 stack.append('result')
             elif ele == '*':
@@ -123,31 +128,20 @@ dictionary = {}
 
 dos = {} # dict za spremanje do vrijednosti petlje -> ključ je do_ (_ je in_a_loop), a vrijednost je string npr i * i (za j od 0 do i*i)
 
+variables = []
 
-for i in range(1, len(data)):
-    if data[i - 1] == '<za_petlja>':
+for i, line in enumerate(pj):
+    if line.find('za') != -1:
         in_a_loop += 1
-    if data[i - 1].find('KR_AZ') != -1:
-        copy_dict = copy.deepcopy(dictionary)
-        for key, value in copy_dict.items():
-            for key2, value2 in value.items():
-                if key2 == in_a_loop:
-                    dictionary[key].pop(key2)
+    if line.find('az') != -1:
         in_a_loop -= 1
-    if data[i - 1] == '<naredba_pridruzivanja>':
-        var = data[i].split(' ')[2]
-        row = data[i].split(' ')[1]
-        if in_a_loop and data[i - 1].find('KR_ZA') == -1:
-            if var in dictionary:
-                continue
-        if var not in dictionary:
-            dictionary[var] = {}
-        if in_a_loop not in dictionary[var]:
-            dictionary[var][in_a_loop] = row
-            # prepoznaje se da se u ovom trenu deklarira varijabla
+    if line.find('=') != -1:
+        var = line.split('=')[0].strip()
+        if var + str(in_a_loop) not in variables:   # deklaracija varijable
+            variables.append(var + str(in_a_loop))
             print_variables.append(var + str(in_a_loop) + ' DW 0')
-            if bool(re.match(r'^-\d+$', pj[int(row) - 1].split('=')[1].strip())):
-                print('\tMOVE %D ' + pj[int(row) - 1].split('=')[1].strip()[1:] + ', R0', sep='')
+            if bool(re.match(r'^-\d+$', line.split('=')[1].strip())):   # varijabla se deklarira samo kao npr. -2
+                print('\tMOVE %D ' + line.split('=')[1].strip()[1:] + ', R0', sep='')
                 print('\tPUSH R0')
                 print('\tPOP R0')
                 print('\tMOVE %D 0, R1')
@@ -155,30 +149,14 @@ for i in range(1, len(data)):
                 print('\tPUSH R2')
                 print('\tPOP R0')
                 print('\tSTORE R0, (' + var + str(in_a_loop) + ')', sep='')
-            else:
-                rpn = toRpn(pj[int(row) - 1].split('=')[1].strip())
+            else:   # deklaracija varijable
+                rpn = toRpn(line.split('=')[1].strip())
                 declare(rpn)
-            # fakat ne znam
-            if in_a_loop > min(dictionary[var].keys()):
-                print("koristenje varijable", var)
-
-    if data[i - 1].find('KR_ZA') != -1:
-        var = data[i].split(' ')[2]
-        row = data[i].split(' ')[1]
-        if in_a_loop and data[i - 1].find('KR_ZA') == -1:
-            if var in dictionary:
-                continue
-        if var not in dictionary:
-            dictionary[var] = {}
-        if in_a_loop not in dictionary[var]:
-            dictionary[var][in_a_loop] = row
-            print_variables.append(var + str(in_a_loop) + ' DW 0')
-            rpn = toRpn(pj[int(row) - 1].split('od')[1].strip().split('do')[0].strip())
-            declare(rpn)
-
-            print_variables.append('do' + str(in_a_loop) + ' DW 0')
-            dos['do' + str(in_a_loop)] = pj[int(row) - 1].split('do')[1].strip() # spremamo do vrijednost za kasnije
-
+        else: # varijabla deklarirana, dodajemo joj novu vrijednost
+            rpn = toRpn(line.split('=')[1].strip())
+            evaluate(rpn)
+            print('\tPOP R0')
+            print('\tSTORE R0, (' + var + str(in_a_loop) + ')', sep='')
 
 print('\tLOAD R6, (rez0)')
 print('\tHALT\n')
