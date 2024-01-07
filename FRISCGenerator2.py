@@ -67,12 +67,12 @@ def declare(rpn):
         print('\tMOVE %D ' + rpn + ', R0', sep='')
         print('\tPUSH R0')
         print('\tPOP R0')
-        print('\tSTORE R0, (' + var + str(in_a_loop) + ')', sep='')
+        print('\tSTORE R0, (' + find_version_of_var(var) + ')', sep='')
 
     else:
         evaluate(rpn)
         print('\tPOP R0')
-        print('\tSTORE R0, (' + var + str(in_a_loop) + ')', sep='')
+        print('\tSTORE R0, (' + find_version_of_var(var) + ')', sep='')
 
 
 def prepare_param_num(param):
@@ -89,14 +89,19 @@ def prepare_param_num_neg(param):
     print('\tSUB R1, R0, R2')
     print('\tPUSH R2')
     print('\tPOP R0')
-    print('\tSTORE R0, (' + var + str(in_a_loop) + ')', sep='')
+    print('\tSTORE R0, (' + find_version_of_var(var) + ')', sep='')
     return
 
 
-def prepare_param_var(param):
-    print('\tLOAD R0, (' + param + ')')
+def prepare_param_var(var):
+    print('\tLOAD R0, (' + find_version_of_var(var) + ')')
     print('\tPUSH R0')
     return
+
+def find_version_of_var(var):
+    versions = [element for element in variables if element.startswith(var)]
+    return max(versions)
+
 
 
 # preuzeto sa https://www.geeksforgeeks.org/evaluate-the-value-of-an-arithmetic-expression-in-reverse-polish-notation-in-python/
@@ -115,13 +120,13 @@ def evaluate(expression):
                 prepare_param_num(left)
             else:
                 if left != 'result':
-                    prepare_param_var([element for element in variables if element.startswith(left)][0] if any(element.startswith(left) for element in variables) else left + str(in_a_loop))
+                    prepare_param_var(left)
 
             if right.isdigit():
                 prepare_param_num(right)
             else:
                 if right != 'result':
-                    prepare_param_var([element for element in variables if element.startswith(right)][0] if any(element.startswith(right) for element in variables) else right + str(in_a_loop))
+                    prepare_param_var(right)
 
             if ele == '+':
                 print('\tPOP R0')
@@ -148,8 +153,6 @@ def evaluate(expression):
 
 extract_pj()
 
-dictionary = {}
-
 dos = {}  # dict za spremanje do vrijednosti petlje -> ključ je do_ (_ je in_a_loop), a vrijednost je string npr i * i (za j od 0 do i*i)
 
 variables = []  # za spremanje varijabli koje su deklarirane
@@ -160,6 +163,7 @@ for i, line in enumerate(pj):
     if line.find('za') != -1:
         in_a_loop += 1
         var = line.split('od')[0].strip().split('za')[1].strip()
+        variables.append(var + str(in_a_loop))
         counters.append(var + str(in_a_loop))
         print_variables.append(
             var + str(in_a_loop) + ' DW 0')  # ovo je brojač petlje, deklarira se (početna je vrijednost od)
@@ -204,6 +208,8 @@ for i, line in enumerate(pj):
         # uvjetni skok
         print('\tCMP R0, R1')
         print('\tJP_SLE L' + str(in_a_loop))
+
+        variables = [item for item in variables if not item.endswith(str(in_a_loop))]
         in_a_loop -= 1
     if line.find('=') != -1:
         var = line.split('=')[0].strip()
