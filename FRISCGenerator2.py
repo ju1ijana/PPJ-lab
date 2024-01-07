@@ -17,11 +17,8 @@ content = ['MD_SGN\tMOVE 0, R6', '\tXOR R0, 0, R0', '\tJP_P MD_TST1', '\tXOR R0,
 
 print("\tMOVE 40000, R7 ; init stog\n")
 
-print_variables = []
 
 data = sys.stdin.read().split("\n")
-#data = ['<program>', ' <lista_naredbi>', '  <naredba>', '   <naredba_pridruzivanja>', '    IDN 1 n', '    OP_PRIDRUZI 1 =', '    <E>', '     <T>', '      <P>', '       BROJ 1 10', '      <T_lista>', '       $', '     <E_lista>', '      $', '  <lista_naredbi>', '   <naredba>', '    <naredba_pridruzivanja>', '     IDN 2 rez', '     OP_PRIDRUZI 2 =', '     <E>', '      <T>', '       <P>', '        BROJ 2 0', '       <T_lista>', '        $', '      <E_lista>', '       $', '   <lista_naredbi>', '    <naredba>', '     <za_petlja>', '      KR_ZA 3 za', '      IDN 3 n', '      KR_OD 3 od', '      <E>', '       <T>', '        <P>', '         BROJ 3 1', '        <T_lista>', '         $', '       <E_lista>', '        $', '      KR_DO 3 do', '      <E>', '       <T>', '        <P>', '         BROJ 3 5', '        <T_lista>', '         $', '       <E_lista>', '        $', '      <lista_naredbi>', '       <naredba>', '        <naredba_pridruzivanja>', '         IDN 4 rez', '         OP_PRIDRUZI 4 =', '         <E>', '          <T>', '           <P>', '            IDN 4 rez', '           <T_lista>', '            $', '          <E_lista>', '           OP_PLUS 4 +', '           <E>', '            <T>', '             <P>', '              IDN 4 n', '             <T_lista>', '              $', '            <E_lista>', '             $', '       <lista_naredbi>', '        $', '      KR_AZ 5 az', '    <lista_naredbi>', '     <naredba>', '      <naredba_pridruzivanja>', '       IDN 6 rez', '       OP_PRIDRUZI 6 =', '       <E>', '        <T>', '         <P>', '          IDN 6 rez', '         <T_lista>', '          $', '        <E_lista>', '         OP_PLUS 6 +', '         <E>', '          <T>', '           <P>', '            IDN 6 n', '           <T_lista>', '            $', '          <E_lista>', '           $', '     <lista_naredbi>', '      <naredba>', '       <za_petlja>', '        KR_ZA 7 za', '        IDN 7 n', '        KR_OD 7 od', '        <E>', '         <T>', '          <P>', '           BROJ 7 1', '          <T_lista>', '           $', '         <E_lista>', '          $', '        KR_DO 7 do', '        <E>', '         <T>', '          <P>', '           BROJ 7 5', '          <T_lista>', '           $', '         <E_lista>', '          $', '        <lista_naredbi>', '         <naredba>', '          <naredba_pridruzivanja>', '           IDN 8 rez', '           OP_PRIDRUZI 8 =', '           <E>', '            <T>', '             <P>', '              IDN 8 rez', '             <T_lista>', '              $', '            <E_lista>', '             OP_PLUS 8 +', '             <E>', '              <T>', '               <P>', '                IDN 8 n', '               <T_lista>', '                $', '              <E_lista>', '               $', '         <lista_naredbi>', '          $', '        KR_AZ 9 az', '      <lista_naredbi>', '       $']
-
 data.pop()
 
 for index, element in enumerate(data):
@@ -152,12 +149,10 @@ def evaluate(expression):
 extract_pj()
 
 dos = {}  # dict za spremanje do vrijednosti petlje -> ključ je do_ (_ je in_a_loop), a vrijednost je string npr i * i (za j od 0 do i*i)
-
 variables = []  # za spremanje varijabli koje su deklarirane
-
-counters = []
-
-used_loop_names = []
+print_variables = [] # za spremanje naredbi za rezerviranje mjesta u memoriji koje se ispisuju naknadno
+counters = [] # za spremanje imena brojača trenutne petlje
+used_loop_names = [] # za spremanje labela za petlje
 
 for i, line in enumerate(pj):
     if line.find('za') != -1:
@@ -170,7 +165,7 @@ for i, line in enumerate(pj):
         od = line.split('od')[1].strip().split('do')[0].strip()
         if bool(re.match(r'^-\d+$', od)):  # varijabla se deklarira samo kao npr. -2
             prepare_param_num_neg(od)
-        else:  # deklaracija varijable
+        else:
             rpn = toRpn(od)
             if len(rpn) == 1 and not rpn.isdigit():
                 print('\tLOAD R0, (' + find_version_of_var(od) + ')')
@@ -219,7 +214,7 @@ for i, line in enumerate(pj):
         print('\tCMP R0, R1')
         print('\tJP_SLE ' + loop_name)
 
-        variables = [item for item in variables if not item.endswith(str(in_a_loop))]
+        variables = [item for item in variables if not item.endswith(str(in_a_loop))] # izlaz iz petlje i micanje varijabli koje u njoj žive
         in_a_loop -= 1
     if line.find('=') != -1:
         var = line.split('=')[0].strip()
