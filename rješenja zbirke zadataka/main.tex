@@ -1,0 +1,3859 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1.5cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[croatian]{babel}
+\usepackage{amsmath}
+\usepackage{ulem}
+\usepackage{amsthm}
+\usepackage{mdframed}
+\usepackage{xcolor} 
+\usepackage{setspace}
+\usepackage{geometry}
+\usepackage{comment}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{multicol}
+\usepackage{amssymb}
+\usepackage{array}
+\usepackage{hyperref} 
+\usepackage{arydshln}
+
+
+
+\definecolor{dkgreen}{RGB}{0,128,0}  
+\definecolor{mauve}{RGB}{128,0,128}
+\definecolor{lightgray}{gray}{0.8} 
+
+\lstset{
+  language=Java,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle=\small\ttfamily,
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
+
+\onehalfspacing
+
+\renewcommand{\thesubsection}{\thesection.\alph{subsection}}
+
+\newenvironment{problem}[2][Zadatak]
+    { \begin{mdframed}[backgroundcolor=lightgray] \textbf{#1 #2} \\}
+    {  \end{mdframed}}
+
+\newenvironment{solution}{}
+
+\renewcommand{\qed}{\quad\qedsymbol}
+
+\begin{document}
+
+\pagenumbering{gobble} 
+\begin{titlepage}
+    \vspace*{0.3\textheight} 
+    \begin{center}
+        \huge \textbf{Rješenja zadataka za vježbu iz predmeta Prevođenje programskih jezika}
+    \end{center}
+    \vspace*{0.5\textheight} 
+    \begin{center}
+        \large izrađeno ak. god. 2023./2024.
+    \end{center}
+    
+\end{titlepage}
+
+\clearpage
+
+\pagenumbering{arabic} 
+\setcounter{page}{1}    
+
+\tableofcontents
+\newpage
+
+\section{Uvod}
+
+\begin{problem}{1}
+    Navedite prednosti i nedostatke uporabe jezičnih procesora.
+\end{problem}
+
+\begin{solution}
+    \noindent  \uwave{}{Prednosti} primjene korisničkog jezika su približiti jezik programiranja području primjene, osloboditi jezik programiranja zavisnosti o arhitekturi računala, lakše učenje pravila jezika, lakši razvoj i razumijevanje programa, lakše otklanjanje pogrešaka i dokumentiranje, prenosivost, skraćeno vrijeme rješavanja problema. \uwave{}{Nedostaci} primjene korisničkog jezika su produljenje vremena potrebnog za prevođenje korisničkog programa u izvodivi strojni program, neučinkovit strojni program, nemoguće iskoristiti sve posebnosti građe računala, potrebno izgraditi razvojnu okolinu koja omogućuje ispitivanje i nadzor izvođenja korisničkih programa. 
+\end{solution}
+
+
+\begin{problem}{2}
+    Navedite tri jezika koji su vezani uz definiciju jezičnog procesora.
+\end{problem}
+
+\begin{solution}
+    \noindent Tri jezika koji ga definiraju su izvorni jezik $L_i$ (jezik kojim je napisan izvorni program), ciljni jezik $L_c$ (jezik kojim je napisan program nakog prevođenja) i jezik izgradnje $L_g$ (jezik kojim je napisan jezični procesor): $\textcolor{red}{\mathrm{JP}^{L_i \xrightarrow[]{} L_c}_{L_g}}$.
+\end{solution}
+
+
+\begin{problem}{3}
+    Navedite koja se pravila susreću kod programskih jezika te ih objasnite.
+\end{problem}
+
+\begin{solution}
+    \noindent \uwave{Leksička pravila} $\xrightarrow[]{}$ ime varijable mora počinjati slovom, ključne riječi su rezervirane i sl.\\
+    \uwave{Sintaksna pravila} $\xrightarrow[]{}$ određuju dozvoljene strukture naredbi, dijelova programa i čitavog programa\\
+    \uwave{Semantička pravila} $\xrightarrow[]{}$ interpretacijska pravila koja povezuju izvođenje izvornog programa s ponašanjem računala
+\end{solution}
+
+\begin{problem}{4}
+    Objasnite samoprevodioca.
+\end{problem}
+
+\begin{solution}
+    \noindent Samoprevoditelj je jezični procesor koji je izgrađen primjenom izvornog jezika (izvorni jezik i jezik izgradnje su identični jezici), $\mathrm{JP}^{A \xrightarrow[]{} B}_A$.
+\end{solution}
+
+
+\begin{problem}{5}
+    Objasnite cilj i osnovne korake postupka samopodizanja.
+\end{problem}
+
+\begin{solution}
+    \noindent Cilj je prenjeti jezični procesor s računala $a$ na računalo $b$ koje je različite arhitekture. Imamo jezični procesor za računalo $a$: $\mathrm{JP}^{L \xrightarrow[]{} A}_{A}$ i želimo izgraditi jezični procesor za računalo $b$: $\mathrm{JP}^{L \xrightarrow[]{} B}_B$. Prvo izgradimo \uwave{samoprevoditelj} $\mathrm{JP}^{L \xrightarrow[]{} B}_L$. Samoprevoditelj prevedemo koristeći $\mathrm{JP}^{L \xrightarrow[]{} A}_{A}$ i dobivamo \uwave{premosni prevoditelj} $\mathrm{JP}^{L \xrightarrow[]{} B}_{A}$. Pokretanjem premosnog prevoditelja na računalu $a$ i prevođenjem samoprevoditelja $\mathrm{JP}^{L \xrightarrow[]{} B}_L$ dobivamo jezični prevoditelj $\mathrm{JP}^{L \xrightarrow[]{} B}_B$.
+\end{solution}
+
+
+\begin{problem}{6}
+    Objasnite što je funkcija preslikavanja jezičnog procesora i navedite njezine vrste.
+\end{problem}
+
+\begin{solution}
+    \noindent Funkcija preslikavanja određuje koliko se naredbi izvornog programa prevodi u koliko naredbi ciljnog programa. Vrste preslikavanja su jedan u jedan, jedan u jedan ili jedan u više, jedan u više, više u jedan i složena funkcija preslikavanja (prevođenje naredbi jednog višeg programskog jezika u naredbe drugog višeg programskog jezika). 
+\end{solution}
+
+
+\begin{problem}{7}
+    Objasnite podjelu jezičnih procesora s obzirom na broj prolazaka kroz izvorni program. 
+\end{problem}
+
+\begin{solution}
+    \noindent \uwave{Jednoprolazni} jezični procesori $\xrightarrow[]{}$ nijedan korak rada ne sprema rezultat svog izvođenja izravno u memoriju računala\\
+    \uwave{Višeprolazni} jezični procesori $\xrightarrow[]{}$ pojedini koraci rada spremaju rezultat izvođenja izravno u memoriju računala
+\end{solution}
+
+
+\begin{problem}{8}
+    Navedite i objasnite korake analize izvornog programa.
+\end{problem}
+
+\begin{solution}
+    \noindent Faza analize rastavlja izvorni program u sastavne dijelove, provjerava pravila jezika, prijavljuje pogreške i zapisuje izvorni program primjenom različitih struktura podataka u memoriju računala. Analiza izvornog programa izvodi se u više zasebnih koraka:\\
+    \uwave{leksička analiza} $=$ linearna analiza znakova izvornog programa, provjerava jesu li leksičke jedinke u izvornom programu ispravno napisane\\
+    \uwave{sintaksna analiza} $=$ grupiranje leksičkih jedinki koje generira leksički analizator u hijerarhijske skupine sa zajedničkim značenjem\\
+    \uwave{semantička analiza} $=$ most između faze analize i faze sinteze; provjera deklaracija varijabli, tipova podataka, indeksiranja polja, parametara programa i tijeka izvođenja programa
+\end{solution}
+
+
+\begin{problem}{9}
+    Objasnite razradbu jezičnih procesora s obzirom na dinamiku izvodenja procesa prevodenja.
+\end{problem}
+
+\begin{solution}
+    \noindent \uwave{Kompilatori} $\xrightarrow[]{}$ prevodi naredbe onim redoslijedom kojim su napisane u izvornom programu; izvođenje ciljnog programa započinje nakon što završi prevođenje
+    $$e^p_1 \xrightarrow[]{} e^p_2 \xrightarrow[]{} --- \xrightarrow[]{} e^p_N \xrightarrow[]{} e^i_{x_1} \xrightarrow[]{} e^i_{x_2} \xrightarrow[]{} --- \xrightarrow[]{} e^i_{x_M} \xrightarrow[]{} \mathrm{STOP}$$
+    \uwave{Interpretatori} $\xrightarrow[]{}$ ne prevodi cijeli izvorni program u ciljni program - prevede jednu naredbu i odmah ju izvede
+    $$e^p_{x_1} \xrightarrow[]{} e^i_{x_1} \xrightarrow[]{} e^p_{x_2} \xrightarrow[]{} e^i_{x_2} \xrightarrow[]{} --- \xrightarrow[]{} e^p_{x_M} \xrightarrow[]{} e^i_{x_M} \xrightarrow[]{} \mathrm{STOP}$$
+    \uwave{Dinamički interpretatori} $\xrightarrow[]{}$ paralelno izvodi procese prevođenja izvornog programa i izvođenja ciljnog programa; procesi su međusobno povezani FIFO spremnikom 
+\end{solution}
+
+
+\begin{problem}{10}
+    Nabrojite i ukratko objasnite svaki od osnovnih koraka u izgradnji jezičnog procesora.
+\end{problem}
+
+\begin{solution}
+    \begin{enumerate}
+        \item definicija jezičnog procesora $\xrightarrow[]{}$ precizno određivanje pravila izvornog jezika, svojstva ciljnog jezika, svojstva arhitekture računala na kojem se izvodi jezični procesor i ciljni jezik, brzine rada, $L_g$ itd. 
+        \item strukturiranje jezičnog procesora $\xrightarrow[]{}$ započinje prije nego završi definiranje; određuju se sučelja i osnovni koraci rada jezičnog procesora
+        \item programsko ostvarenje jezičnog procesora $\xrightarrow[]{}$ izbor programskog jezika koji se koristi za ostvarenje jezičnog procesora, izbor odgovarajuće okoline za razvoj i ispitivanje te gradnja programa jezičnog procesora
+        \item ocjena $\xrightarrow[]{}$ ispitati dosljednost, procijeniti koliko izgrađeni jezični procesor zadovoljava svojstva zadana definicijom
+        \item održavanje jezičnog procesora $\xrightarrow[]{}$ nastoji se poboljšati učinkovitost rada, prilagodba novom području primjene, ispravljanje pogrešaka
+    \end{enumerate}
+\end{solution}
+
+
+\begin{problem}{11}
+    Koristeći Hoareov sustav oznaka CSP, opišite vrste jezičnih procesora s obzirom na dinamiku izvođenja.    
+\end{problem}
+
+\begin{solution}
+    \noindent $N$ ukupan broj naredbi u izvornom programu, $e^p_i$ događaj prevođenja $i$-te naredbe izvornog programa, $e^i_{x_i}$ događaj izvođenja naredbe $x_i$ izvornog programa, $M$ broj izvedenih naredbi izvornog programa, $>>$ komunikacija između procesa\\
+    PREVOĐENJE $>>$ SPREMNIK$^b$ $>>$ IZVOĐENJE (opis rada dinamičkog interpretatora)
+\end{solution}
+
+
+\begin{problem}{12}
+    Objasnite kompilatore i interpretatore, odnosno njihovu razliku, ne koristeći Hoareov sustav
+    oznaka CSP.
+\end{problem}
+
+\begin{solution}
+    \noindent Interpretator, za razliku od kompilatora, ne prevodi cijeli izvorni program u ciljni program nego prevede jednu naredbu i odmah je izvede te se naredbe ne prevode onim redoslijedom kojim su navedene u izvornom programu već je redoslijed prevođenja naredbi određen redoslijedom njihova izvođenja. 
+\end{solution}
+
+
+\begin{problem}{13}
+    Navedite faze rada jezičnog procesora od kojih se sastoje faza analize izvornog programa i faza sinteze ciljnog programa.
+\end{problem}
+
+\begin{solution}
+    \noindent \uwave{koraci analize}: leksička, sintaksna i semantička analiza\\
+    \uwave{koraci sinteze}: generiranje međuk\^{o}da, strojno nezavisno optimiranje, generiranje strojnog programa, strojno zavisno optimiranje, priprema strojnog programa za izvođenje
+\end{solution}
+
+\begin{problem}{14}
+    Za svako od tri računala $A$, $B$ i $C$ s odgovarajućim strojnim jezicima $a$, $b$ i $c$ izgradite jezične procesore koji prevode jezik $l$ u jezik $n$ i koji su izvedivi na pojedinim računalima. Jezične procesore treba izgraditi pomoću raspoloživih jezičnih procesora $\mathrm{JP}^{l \xrightarrow[]{} n}_ l$, $\mathrm{JP}^{l \xrightarrow[]{} a}_ a$, $\mathrm{JP}^{n \xrightarrow[]{} o}_ b$, $\mathrm{JP}^{o \xrightarrow[]{} b}_ o$ i $\mathrm{JP}^{o \xrightarrow[]{} c}_ c$
+\end{problem} 
+
+\begin{solution}
+    $$\mathrm{JP}^{l \xrightarrow[]{} n}_ l \xrightarrow[]{\mathrm{JP}^{l \xrightarrow[]{} a}_ a} \mathrm{JP}^{l \xrightarrow[]{} n}_a $$  
+    $$\mathrm{JP}^{l \xrightarrow[]{} n}_ l \xrightarrow[]{\mathrm{JP}^{l \xrightarrow[]{} n}_ l} \mathrm{JP}^{l \xrightarrow[]{} n}_n \xrightarrow[]{\mathrm{JP}^{n \xrightarrow[]{} o}_ b} \mathrm{JP}^{l \xrightarrow[]{}n}_o \xrightarrow[]{\mathrm{JP}^{o \xrightarrow[]{} b}_ o} \mathrm{JP}^{l \xrightarrow[]{} n}_b $$
+   $$\mathrm{JP}^{l \xrightarrow[]{} n}_ l \xrightarrow[]{\mathrm{JP}^{l \xrightarrow[]{} n}_ l} \mathrm{JP}^{l \xrightarrow[]{} n}_n \xrightarrow[]{\mathrm{JP}^{n \xrightarrow[]{} o}_ b} \mathrm{JP}^{l \xrightarrow[]{}n}_o \xrightarrow[]{\mathrm{JP}^{o \xrightarrow[]{} c}_ c} \mathrm{JP}^{l \xrightarrow[]{} n}_c $$
+\end{solution}
+
+
+\begin{problem}{15}
+    Za računalo $A$ postoji gotov jezični procesor $\mathrm{JP}^{l\xrightarrow[]{} a}_a$, dok je na računalu $B$ na raspolaganju jezični procesor $\mathrm{JP}^{n\xrightarrow[]{} c}_b$. Računalo $C$ novo je računalo i za njega ne postoji nikakav jezični procesor, a potrebno je program napisan u jeziku $m$ prevesti u ciljni program za to računalo. Raspoloživ je i jezični procesor $\mathrm{JP}^{m\xrightarrow[]{} n}_m$, a zbog modularnosti je potrebno napisati jezični procesor $\mathrm{JP}^{m\xrightarrow[]{} l}_?$. Odredite u kojem je višem jeziku ($l$, $m$ ili $n$) potrebno napisati taj jezični procesor da bi se na najkraći mogući način preveo program te navedite najkraći postupak prevodenja programa iz jezika $m$ u ciljni jezik $c$. 
+\end{problem}
+
+\begin{solution}
+    
+\end{solution}
+
+\begin{problem}{16}
+    Tijekom razvoja složenog sustava koji se sastoji od tri računalne arhitekture $A$, $B$ i $C$ pojavila se potreba za razvojem jezičnog procesora $\mathrm{JP}^{o\xrightarrow[]{} b}_b$. Za potrebe sustava već su napisani jezični procesori $\mathrm{JP}^{l\xrightarrow[]{} a}_a$, $\mathrm{JP}^{l\xrightarrow[]{} n}_c$ i $\mathrm{JP}^{o\xrightarrow[]{} b}_c$. Osim toga, preko Interneta su javno dostupna još tri jezična procesora: $\mathrm{JP}^{m\xrightarrow[]{} b}_l$, $\mathrm{JP}^{n\xrightarrow[]{} o}_m$ i $\mathrm{JP}^{o\xrightarrow[]{} b}_n$. Budući da se projekt približava krajnjem roku, nema
+    dovoljno vremena za pisanje novog jezičnog procesora pa je potrebno jezični procesor $\mathrm{JP}^{o\xrightarrow[]{} b}_b$ konstruirati pomoću raspoloživih jezičnih procesora. Napišite postupak konstrukcije. 
+\end{problem}
+
+\begin{solution}
+    $$\mathrm{JP}^{o\xrightarrow[]{} b}_n \xrightarrow[]{\mathrm{JP}^{n\xrightarrow[]{} o}_m} \mathrm{JP}^{o \xrightarrow[]{} b}_o \xrightarrow[]{\mathrm{JP}^{o\xrightarrow[]{} b}_c} \mathrm{JP}^{o\xrightarrow[]{} b}_b$$
+\end{solution}
+
+
+\begin{problem}{17}
+    Za računalo $A$ postoji jezični procesor $\mathrm{JP}^{z\xrightarrow[]{} x}_a$, dok je na računalu $B$ dostupan jezični procesor    $\mathrm{JP}^{x\xrightarrow[]{} a}_b$. Raspoloživ je i jezični procesor $\mathrm{JP}^{x\xrightarrow[]{} y}_z$. Odredite u kojem višem programskom jeziku ($x$, $y$ ili $z$) treba izgraditi jezični procesor $\mathrm{JP}^{y\xrightarrow[]{} b}_?$, tako da se može ostvariti prevodenje programa napisanog u jeziku $y$ u ciljni jezik $b$. Navedite sve korake u postupku prevodenja programa. 
+\end{problem}
+
+\begin{solution}
+    \noindent izgradnja dodatnih jezičnih procesora:
+    $$\mathrm{JP}^{x\xrightarrow[]{} y}_z \xrightarrow[]{\mathrm{JP}^{z\xrightarrow[]{} x}_a} \mathrm{JP}^{x\xrightarrow{}y} _x$$
+    $$\mathrm{JP}^{x\xrightarrow{}y} _x \xrightarrow[]{\mathrm{JP}^{x\xrightarrow[]{} a}_b} \mathrm{JP}^{x\xrightarrow[]{}y}_a$$
+    ako je jezik izgradnje $x$:
+    $$\mathrm{JP}^{y\xrightarrow[]{} b}_x \xrightarrow[]{\mathrm{JP}^{x\xrightarrow[]{} a}_b} \mathrm{} \mathrm{JP}^{y \xrightarrow[]{} b}_a$$
+    ako je jezik izgradnje $z$:
+    $$\mathrm{JP}^{y\xrightarrow[]{} b}_z \xrightarrow[]{\mathrm{JP}^{z\xrightarrow[]{} x}_a} \mathrm{JP}^{y\xrightarrow[]{} b}_x \xrightarrow[]{\mathrm{JP}^{x\xrightarrow[]{} a}_b} \mathrm{} \mathrm{JP}^{y \xrightarrow[]{} b}_a$$
+    Za jezik izgradnje $y$ nije moguće izgraditi traženi jezični procesor (nemamo na raspolaganju jezični procesor koji bi jezik izgradnje $y$ preveo u neki od viših programskih jezika, u jezik $a$ ili u jezik $b$). Zaključak je da je potrebno JP izgraditi u jeziku $x$ jer se korištenjem tog jezika u najmanjem broju koraka dolazi do željenog jezičnog procesora. 
+\end{solution}
+
+
+
+ \begin{problem}{18}
+     Računalni sustav sastoji se od jednog računala arhitekture $A$ i jednog računala arhitekture $B$. Za računalnu arhitekturu $B$ razvijen je jezični procesor $\mathrm{JP}^{c\xrightarrow[]{} b}_b$
+     kojim je omogućeno izvođenje
+     programa napisanih višim programskim jezikom $c$ na računalu arhitekture $B$. Osim toga, na raspolaganju su jezični procesori $\mathrm{JP}^{c\xrightarrow[]{} b}_p$, $\mathrm{JP}^{p\xrightarrow[]{} b}_p$, $\mathrm{JP}^{p\xrightarrow[]{} a}_c$ i $\mathrm{JP}^{c\xrightarrow[]{} b}_c$. Uporabom navedenih jezičnih procesora izgradite jezični procesor koji će na računalu arhitekture $A$ omogućiti prevođenje programa napisanih višim programskim jezikom $p$ u programe izvodive na računalu arhitekture $B$. 
+ \end{problem}
+
+\begin{solution}
+    $$\mathrm{JP}^{p\xrightarrow[]{} a}_c \xrightarrow[]{\mathrm{JP}^{c\xrightarrow[]{} b}_b} \mathrm{JP}^{p \xrightarrow[]{} a}_b$$
+    $$\mathrm{JP}^{p\xrightarrow[]{} b}_p \xrightarrow[]{\mathrm{JP}^{p \xrightarrow[]{} a}_b} \mathrm{JP}^{p \xrightarrow[]{} b}_a$$
+\end{solution} 
+
+
+\begin{problem}{19}
+    Prikažite postupak izgradnje izvodivog jezičnog procesora koji prevodi jezik $l$ u strojni jezik $a$. Na raspolaganju su samoprevodilac koji prevodi jezik $l$ u strojni jezik $a$, $\mathrm{JP}^{p\xrightarrow[]{} s}_a$, $\mathrm{JP}^{s\xrightarrow[]{} a}_a$, $\mathrm{JP}^{l\xrightarrow[]{} q}_b$, 
+    $\mathrm{JP}^{r\xrightarrow[]{} a}_b$ i 
+    $\mathrm{JP}^{q\xrightarrow[]{} p}_r$ te računala $A$ i $B$ na kojima se mogu izvoditi programi pisani strojnim jezicima $a$ i $b$. 
+\end{problem}
+
+\begin{solution}
+    $$\mathrm{JP}^{l \xrightarrow[]{}a}_l \xrightarrow[]{\mathrm{JP}^{l\xrightarrow[]{} q}_b} \mathrm{JP}^{l\xrightarrow[]{} a}_q \xrightarrow[]{\mathrm{JP}^{q\xrightarrow[]{} p}_r} \mathrm{JP}^{l\xrightarrow[]{} a}_p \xrightarrow[]{\mathrm{JP}^{p\xrightarrow[]{} s}_a} \mathrm{JP}^{l\xrightarrow[]{} a}_s \xrightarrow[]{\mathrm{JP}^{s\xrightarrow[]{} a}_a} \mathrm{JP}^{l\xrightarrow[]{} a}_a$$
+\end{solution}
+
+\begin{problem}{20}
+    Tijekom razvoja složenog sustava koji se sastoji od dvije računalne arhitekture $A$ i $B$ pojavila se potreba za razvojem jezičnog procesora $\mathrm{JP}^{l\xrightarrow[]{} a}_b$. Za potrebe sustava već je napisan jezični procesor $\mathrm{JP}^{m\xrightarrow[]{} a}_a$. Osim toga, preko Interneta su javno dostupna još četiri jezična procesora: $\mathrm{JP}^{l\xrightarrow[]{} b}_m$, $\mathrm{JP}^{m\xrightarrow[]{} a}_l$, $\mathrm{JP}^{l\xrightarrow[]{} a}_l$ i $\mathrm{JP}^{m\xrightarrow[]{} b}_m$. Budući da se projekt približava krajnjem roku, nema dovoljno vremena za pisanje novog jezičnog procesora pa je potrebno jezični procesor $\mathrm{JP}^{l\xrightarrow[]{} a}_b$ konstruirati pomoću raspoloživih jezičnih procesora. Napišite postupak konstrukcije $\mathrm{JP}^{l\xrightarrow[]{} a}_b$.
+\end{problem}
+
+\begin{solution}
+    $$\mathrm{JP}^{l\xrightarrow[]{} a}_l \xrightarrow[]{\mathrm{JP}^{l\xrightarrow[]{} b}_m} \mathrm{JP}^{l\xrightarrow[]{} a}_b $$
+\end{solution}
+
+\begin{problem}{21}
+    Za novo računalo “Amiga 2001” (računalo $C$) kao osnovni jezik treba upotrijebiti “C++”
+    (jezik $m$) pa je potrebno izgraditi jezični procesor $\mathrm{JP}^{m\xrightarrow[]{} c}_c$. Na “PC” računalu (računalo $B$) postoji jezični procesor $\mathrm{JP}^{l\xrightarrow[]{} b}_b$ koji prevodi jezik “C” (jezik $l$) u Intelov strojni jezik te jezični procesor $\mathrm{JP}^{k\xrightarrow[]{} c}_b$, koji prevodi jezik “BCPL” (jezik $k$) u strojni jezik računala “Amiga 2001”. Na raspolaganju je i računalo “Amiga 4000” (računalo $A$) sa pripadnim jezičnim procesorom $\mathrm{JP}^{k\xrightarrow[]{} a}_a$, koji prevodi jezik “BCPL” u Motorolin strojni jezik. Pored ovoga postoje i jezični procesori $\mathrm{JP}^{l\xrightarrow[]{} k}_k$ (kros-kompilator) koji prevodi jezik “C” u jezik “BCPL” i koji je napisan u “BCPL”-u te $\mathrm{JP}^{m\xrightarrow[]{} c}_l$ koji prevodi “C++” u strojni jezik računala “Amiga 2001”, a napisan je u “C”-u. Napišite postupak samopodizanja kojim se može dobiti traženi jezični procesor uz uporabu postojećih jezičnih procesora. 
+\end{problem}
+
+\begin{solution}
+    $$\mathrm{JP}^{m\xrightarrow[]{} c}_l \xrightarrow[]{\mathrm{JP}^{l\xrightarrow[]{} k}_k} \mathrm{JP}^{m \xrightarrow[]{} c}_k \xrightarrow[]{\mathrm{JP}^{k\xrightarrow[]{} c}_b} \mathrm{JP}^{m\xrightarrow[]{} c}_c$$
+\end{solution}
+
+\begin{problem}{22}
+    U računalnom sustavu koriste se tri računala $A$, $B$ i $C$, različitih arhitektura, pri čemu računalo $A$ izvodi strojni jezik $a$, računalo $B$ izvodi strojni jezik $b$, a računalo $C$ izvodi strojni jezik $c$.
+    Za računalo C dostupni su $\mathrm{JP}^{y\xrightarrow[]{} c}_c$ i $\mathrm{JP}^{z\xrightarrow[]{} c}_c$ te samoprevodioci $\mathrm{JP}^{y\xrightarrow[]{} a}_y$ i $\mathrm{JP}^{z\xrightarrow[]{} b}_z$. Osim toga, dostupni su jezični procesori $\mathrm{JP}^{a\xrightarrow[]{} y}_y$, $\mathrm{JP}^{y\xrightarrow[]{} c}_z$ i $\mathrm{JP}^{x\xrightarrow[]{} c}_a$. Navedite postupak konstrukcije $\mathrm{JP}^{x\xrightarrow[]{} c}_c$ primjenom isključivo raspoloživih jezičnih procesora. Dopušteno je stvaranje i novih jezičnih procesora, ali isključivo prevođenjem postojećih jezičnih procesora pomoću drugih raspoloživih
+    jezičnih procesora.
+\end{problem}
+
+\begin{solution}
+    $$\mathrm{JP}^{x\xrightarrow[]{} c}_a \xrightarrow[]{\mathrm{JP}^{a\xrightarrow[]{} y}_y} \mathrm{JP}^{x\xrightarrow[]{} c}_y \xrightarrow[]{\mathrm{JP}^{y\xrightarrow[]{} c}_z} \mathrm{JP}^{x\xrightarrow[]{} c}_c$$
+\end{solution}
+
+\newpage
+
+\section{Leksička analiza}
+
+\begin{problem}{23}
+    Opišite dinamiku izvođenja leksičke analize. 
+\end{problem}
+
+\begin{solution}
+    \noindent Suradnja leksičkog i sintaksnog analizatora ostvaruje se na dva načina. Ako se ostvari putem \uwave{poziva potprograma}, onda je leksički analizator potprogram sintaksnog analizatora. Ako se suradnja ostvari \uwave{razmjenom čitave tablice uniformnih znakova}, onda je leksički analizator zasebni prolaz jezičnog procesora.
+\end{solution}
+
+\begin{problem}{24}
+    Opišite program simulator leksičkog analizatora zasnovan na tablici prijelaza $\varepsilon$-NKA.
+\end{problem}
+
+\begin{solution}
+    \begin{enumerate}
+        \item u program simulator ugradi se tablica prijelaza $\varepsilon$-NKA $M = (Q, \Sigma, \delta, p_0, F)$ koji je izgrađen na osnovi regularnih definicija klasa leksičkih jedinki
+        \item u ulazni spremnik učita se cijeli izvorni program
+        \item neka je $R$ skup stanja $\varepsilon$-NKA; na početku rada skup stanja je $R = \varepsilon$-okruženje$(p_0)$ 
+        \item čita znak ($a$) po znak i određuje $R = \varepsilon$-okruženje$(\delta(Q, a))$; izabire onaj $q_i$ iz skupa $P = R \cap F$ kojemu je pridružen regularni izraz $r_i$ koji je naveden prije svih ostalih regularnih izraza koji su pridruženi ostalim stanjima u skupu $P$; kad $R = \{\}$ (prazan skup) prekida se čitanje
+        \item nakon što skup stanja $R$ postane prazan, na temelju vrijednosti varijable Izlaz određuje se leksička jedinka i klasa te jedinke
+        \item ima li još znakova u ulaznom spremnik koji nisu analizirani, nastavlja se korakom 4, inače završava rad simulatora
+    \end{enumerate}
+\end{solution}
+
+
+\begin{problem}{25}
+     Opišite način izrade globalne tablice znakova.
+\end{problem}
+
+\begin{solution}
+    \noindent Leksički analizator odredi klasu leksičke jedinke, zapiše uniformni znak u tablicu uniformnih znakova i započinje pretraživanje ostalih tablica. Ako za leksičku jedinku postoji zapis u odgovarajućoj tablici (npr. u tablici identifikatora za identifikatore), onda se u tablicu uniformnih znakova zapisuje kazaljka koja pokazuje na mjesto pronađenog zapisa. Ako ne postoji traženi zapis u odgovarajućoj tablici, stvara se novi zapis i u tablicu uniformnih znakova upisuje se kazaljka koja pokazuje na novostvoreni zapis. Za konstante se u tablicu konstanti zapisuje i tip konstante, a za KROS jedinke zapisuju se dodatni parametri (npr. podaci o prednostima operatora, je li znak prekidni i sl.).
+\end{solution}
+
+
+\begin{problem}{26}
+    Nabrojite i objasnite osnovne klase leksičkih jedinki.
+\end{problem}
+
+\begin{solution}
+    \noindent \uwave{Specijalni znakovi} (zagrade, zarezi, točka), \uwave{operatori} (za zbrajanje, oduzimanje, množenje), \uwave{ključne riječi} (ako, onda, inače), \uwave{identifikatori} (imena varijabli, potprograma), \uwave{konstante} (cjelobrojne, znakovne)
+\end{solution}
+
+\begin{problem}{27}
+    Opišite program simulator leksičkog analizatora zasnovan na tablici prijelaza DKA. 
+\end{problem}
+
+\begin{solution}
+    \noindent Vidi zadatak 40.
+\end{solution}
+
+
+\begin{problem}{28}
+    Objasnite kako leksički analizator utvrđuje leksičku pogrešku i navedite dva postupka oporavka od pogreške. 
+\end{problem}
+
+\begin{solution}
+    \noindent Od pogreške se oporavlja odbacivanjem krajnje lijevog znaka niza koji nema nijedan prefiks definiran barem jednim od regularnih izraza. Nakon odbacivanja krajnje lijevog znaka, taj se znak ispisuje i nastavlja se s analizom ostatka niza.
+\end{solution}
+
+
+\begin{problem}{30}
+    Opišite podatkovne strukture leksičkog analizatora. 
+\end{problem}
+
+\begin{solution}
+    \noindent Podatkovnu strukturu leksičkog analizatora čine izvorni program, tablica uniformnih znakova i tablica znakova.\\
+    \uwave{tablica uniformnih znakova} $\xrightarrow[]{}$ zapisani uniformni znakovi onim redoslijedom kojim su leksičke jedinke zadane u izvornom programu; prva je kazaljka sam uniformni znak (pokazuje na jednu od tri tablice), a druga kazaljka pokazuje na mjesto zapisa leksičke jedinke u tablici određenoj prvom kazaljkom \\
+    \uwave{tablica znakova} $\xrightarrow[]{}$ razlaže se na tablicu identifikatora, tablicu konstanti i KROS tablicu
+\end{solution}
+
+
+\begin{problem}{31}
+    Objasnite metode opisa leksičkih jedinki, pravila određivanja klasa leksičkih jedinki i postupak grupiranja leksičkih jedinki koje se koriste za izgradnju generatora leksičkog analizatora.
+\end{problem}
+
+\begin{solution}
+    \noindent Leksička se pravila zadaju primjenom regularnih izraza i regularnih definicija. Za svaku klasu leksičkih jedinki definira se zasebni regularni izraz, ako je niz definiran primjenom više regularnih izraza uzima se onaj koji je prvi zapisan u nizu regularnih izraza. Tijekom grupiranja leksičkih jedinki, određuje se najdulji prefiks niza koji je definiran barem jednim regularnim izrazom.
+\end{solution}
+
+
+
+\begin{problem}{32}
+    Navedite i ukratko objasnite pet zadataka leksičkog analizatora. 
+\end{problem}
+
+\begin{solution}
+    \begin{enumerate}
+        \item Slijedno čita tekst izvornog programa znak po znak $=$ jedini korak rada koji izravno pristupa znakovima teksta izvornog programa
+        \item Stvara učinkovit zapis znakova izvornog programa $=$ k\^odiranje znakova izvornog programa te nije potrebno razlikovati sve znakove
+        \item Odbacuje znakove koji se ne koriste u daljnjim koracima rada jezičnog procesora $=$ izbacivanje kometara, bjelina, tabulatora, CR, LF i sl.
+        \item Grupira znakove u leksičke jedinke $=$ leksičke jedinke zapisuje odvojene prekidnim znakovima ili slobodnim načinom zapisa
+        \item Odrediti klase leksičkim jedinkama $=$ središnji algoritam leksičkog analizatora
+        \item Provjera leksičkih pravila $=$ pravila klasa zadana su regularnim izrazima; pokušava leksičku jedinku svrstati u jednu od klasa
+        \item Pronalazi pogreške i određuje mjesto pogreške u izvornom programu 
+        \item Zapisuje parametre leksičkih jedinki u tablicu znakova $=$ u tablicu se sprema leksička jedinka u obliku u kakvom je u izvornom programu i njezini parametri
+        \item Čuva tekstualnu strukturu izvornog programa 
+    \end{enumerate}
+\end{solution}
+
+\begin{problem}{33}
+     Navedite i na primjeru objasnite dva osnovna načina razrješavanja nejednoznačnosti u leksičkoj analizi.
+\end{problem}
+
+\begin{solution}
+    \noindent Prvi je način \uwave{pretraživanje desnog konteksta} - npr. u programskom jeziku FORTRAN niz $DO$ ključna je riječ ako i samo ako iza niza $DO$ u ulaznom spremniku slijedi niz precizno definiran regularnim izrazom. Drugi je način \uwave{pretraživanje lijevog konteksta} - npr. operatori $+$ i $-$ unarni su operatori u slučaju kad se neposredno ispred njih nalazi znak pridruživanja.
+\end{solution}
+
+
+\begin{problem}{34}
+    Navedite i objasnite varijable koje koristi simulator zasnovan na tablici prijelaza DKA. U
+    ovisnosti o navedenim varijablama, objasnite postupak simulatora za grupiranje i određivanje
+    klase leksičke jedinke.
+\end{problem}
+
+\begin{solution}
+    \noindent Varijable koje koristi simulator DKA su \uwave{početak} (pokazuje na početak neanaliziranog dijela niza), \uwave{završetak} (pokazuje na posljednji pročitani znak), \uwave{posljednji} (pokazuje na posljednji znak najduljeg prepoznatog prefiksa niza) i \uwave{izraz} (poprima vrijednost oznake regularnog izraza najduljeg prepoznatog prefiksa). Početno je stanje varijabli završetak i izraz nula, a početak i posljednji imaju vrijednost jedan. Nakon što DKA prijeđe u stanje $\varnothing$, na temelju vrijednosti varijable izraz određuje se grupiranje u leksičku jedinku i njezina klasa. Ukoliko je vrijednost varijable izlaz nula, simulator nije pronašao nijedan prefiks koji je definiran barem jednim regularnim izrazom i pokreće se postupak oporavka od pogreške odbacivanjem krajnje lijevog znaka. 
+\end{solution}
+
+\begin{problem}{35}
+    Objasnite postupak razrješenja nejednoznačnosti u leksičkoj analizi pretraživanjem lijevog konteksta.
+\end{problem}
+
+\begin{solution}
+    \noindent Za potrebe pretraživanja lijevog konteksta definiraju se dodatna stanja. Ulazak i izlazak iz dodatnih stanja zadaje se u akcijama pridruženim pojedinim regularnim izrazima. Lijeva kontekstna ovisnost zadana je ovako: \texttt{<ime stanja> r}.
+\end{solution}
+
+\begin{problem}{36}
+    Općenito objasnite (ne na primjeru) postupak primjene pretraživanja desnog konteksta za razrješavanje nejednoznačnosti u leksičkoj analizi. Potrebno je definirati kako se u regularnim izrazima zadaje desni kontekst, kako se na osnovi regulranih izraza sa zadanim desnim kontekstom stvara konačni automat te kako se dobiveni konačni automat koristi za leksičku analizu.
+\end{problem}
+
+\begin{solution}
+    \noindent Pretraživanje desnog konteksta zadaje se na sljedeći način: \texttt{r/r'}. U postupku izgradnje $\varepsilon$-NKA na temelju regularnih izraza \texttt{r/r'} definira se regularni izraz \texttt{rr'}. Tijekom rada program koristi regularne izraze \texttt{r} i \texttt{rr'}. Pronađe li simulator prefiks niza znakova koji je definiran regularnim izrazom \texttt{rr'}, grupiraju se samo znakovi koji su definirani regularnim izrazom \texttt{r}. Analiza se nastavlja krajnje lijevim znakom u nizu definiranom regularnim izrazom \texttt{r'}.
+\end{solution}
+
+
+\begin{problem}{37}
+    Navedite pravila za određivanje klase leksičke jedinke i grupiranje znakova u leksičke jedinke. 
+\end{problem}
+
+\begin{solution}
+    \noindent \textbf{P1} Za sve leksičke jedinke koje je potrebno razlikovati tijekom sintaksne analize definira se zasebni regularni izraz.\\
+    \textbf{P2} Ako je niz znakova $x$ definiran primjenom dva regularna izraza $r_k$ i $r_l$ koji označavaju dvije različite klase leksičkih jedinki, $k$ i $l$, onda je niz $x$ u klasi $k$ ako i samo ako je regularni izraz $r_k$ zapisan u listi regularnih izraza prije izraza $r_l$.\\
+    \textbf{P3} Tijekom grupiranja traži se najdulji prefiks niza $w$ koji je definiran barem jednim regularnim izrazom. Neka je $w$ niz znakova izvornog programa, a $x$ i $y$ su nizovi znakova definirani zadanim regularnim nizovima. Niz znakova $x$, koji je prefiks niza $w$, jest leksička jedinka ako i samo ako bilo koji drugi prefiks $y$ niza $w$ jest ujedno i prefiks niza $x$.
+\end{solution}
+
+
+\begin{problem}{38}
+     Općenito definirajte (ne na primjeru) ulaze i izlaze iz programa generatora leksičkog analizatora i programa leksičkog analizatora ako je leksički analizator ostvaren kao zasebni prolaz jezičnog procesora.
+\end{problem}
+
+\begin{solution}
+    \noindent \uwave{generator leksičkog analizatora}: ulaz je opis procesa leksičkog analizatora (regularni izrazi, imena leksičkih jedinki i sl.), izlaz je izvorni k\^od programa leksičkog analizatora\\
+    \uwave{leksički analizator}: ulaz je niz znakova izvornog programa, izlaz je tablica uniformnih znakova
+\end{solution}
+
+
+\begin{problem}{39}
+    Navedite strukture podataka pogodne za ostvarenje tablice znakova i asimptotsku složenost osnovnih operacija nad tablicom znakova za svaku predloženu strukturu podataka.
+\end{problem}
+
+\begin{solution}
+    \noindent \uwave{linearna lista} $\xrightarrow[]{}$ jedna kazaljka pokazuje na početak, druga na kraj; traženje $\mathrm{O}(n)$, dodavanje $\mathrm{O}(1)$\\
+    \uwave{uređena lista} $\xrightarrow[]{}$ pogodna za KROS tablicu jer se ne mijenja; traženje $\mathrm{O}(\log_2 n)$, dodavanje $\mathrm{O}(n)$\\
+    \uwave{binarno stablo} $\xrightarrow[]{}$ traženje $\mathrm{O}(\log_2 n)$, dodavanje $\mathrm{O}(\log_2 n)$\\
+    \uwave{raspršeno adresiranje} $\xrightarrow[]{}$ u idealnom slučaju obje operacije $\mathrm{O}(1)$, ako imamo $c$ različitih ključeva i $n$ zapisa, složenost pretraživanja proporcionalna je $\frac{n}{2c}$
+\end{solution}
+
+\begin{problem}{40}
+    Opišite algoritam leksičkog analizatora zasnovanog na tablici prijelaza DKA.
+\end{problem}
+
+\begin{solution}
+    \begin{enumerate}
+        \item u program simulator ugradi se tablica prijelaza DKA $M' = (Q', \Sigma', \delta ', p_0', F')$ koji se izgradi na temelju $\varepsilon$-NKA $M = (Q, \Sigma, \delta , p_0, F)$; dodaje se i neprihvatljivo stanje $\varnothing$ u koje se prelazi nema li $\varepsilon$-NKA definiranih prijelaza
+        \item u ulazni spremnik spremi se cijeli izvorni program
+        \item simulator započinje rad čitanjem krajnje lijevog znaka; koriste se kazaljke \uwave{početak} (pokazuje na početak neanaliziranog dijela niza), \uwave{završetak} (pokazuje na posljednji pročitani znak), \uwave{posljednji} (pokazuje na posljednji znak najduljeg prepoznatog prefiksa niza) i \uwave{izraz} (poprima vrijednost oznake regularnog izraza najduljeg prepoznatog prefiksa)
+        \item čita znak ($a$) po znak i određuje $q' = \delta'(q', a)$; izabire onaj $q_i$ iz skupa $P = \{q_0, q_1, ..., q_k\} \cap F$ kojemu je pridružen regularni izraz $r_i$; kad $q' = \varnothing$ prekida se čitanje
+        \item nakon što DKA prijeđe u stanje $\varnothing$, na temelju vrijednosti varijable Izlaz određuje se leksička jedinka i klasa te jedinke
+        \item ima li još znakova u ulaznom spremnik koji nisu analizirani, nastavlja se korakom 4, inače završava rad simulatora
+    \end{enumerate}
+\end{solution}
+
+\newpage
+
+\begin{problem}{41}
+     Za zadani program nacrtajte sve tablice koje se stvaraju u leksičkoj analizi. 
+     \begin{lstlisting}
+     program Phoebe;
+        j:=1; k:=1;
+        ispisi (j,k);
+        za i:=3 do 20 cini
+            k:=j+k;
+            j:=k-j;
+            ispisi (k);
+        kraj
+    kraj
+    \end{lstlisting}
+\end{problem}
+
+\begin{solution}
+    \begin{multicols}{4}
+        \begin{tabular}{|c|c|}
+        \hline
+        KROS &  1\\
+        \hline
+        IDN & 1 \\
+        \hline
+        KROS & 2\\
+        \hline
+        IDN & 2  \\
+        \hline
+        KROS & 3 \\
+        \hline
+        KON &  1 \\
+        \hline
+        KROS & 2 \\
+        \hline
+        IDN & 3 \\
+         \hline
+        KROS & 3 \\
+         \hline
+        KON & 1 \\
+         \hline
+        KROS & 2 \\
+         \hline
+        IDN &  4\\
+         \hline
+        KROS &  4\\
+         \hline
+        IDN &  2\\
+         \hline
+        KROS & 6 \\
+        \hline
+         IDN & 3 \\
+         \hline
+         KROS & 5 \\
+         \hline
+         KROS & 2 \\
+         \hline
+         KROS & 7 \\
+         \hline
+         IDN & 5 \\
+         \hline
+         KROS & 3 \\
+         \hline
+         KON & 2 \\
+         \hline
+         KROS & 8 \\
+         \hline
+         KON & 3 \\
+         \hline
+         KROS & 9 \\
+         \hline
+         
+   \end{tabular} 
+
+    \columnbreak
+
+    \begin{tabular}{|c|c|}
+        \hline
+        IDN & 3 \\
+        \hline
+        KROS & 3 \\
+        \hline
+        IDN & 2 \\
+        \hline
+        KROS & 10 \\
+        \hline
+        IDN & 3 \\
+        \hline
+        KROS & 2 \\
+        \hline
+        IDN & 2 \\
+        \hline
+        KROS & 3 \\
+        \hline
+        IDN & 3 \\
+        \hline
+        KROS & 11 \\
+        \hline
+        IDN & 2 \\
+        \hline
+        KROS & 2 \\
+        \hline
+        IDN & 4 \\
+        \hline
+        KROS & 4 \\
+        \hline
+        IDN & 3 \\
+        \hline
+        KROS & 5 \\
+        \hline
+        KROS & 2 \\
+        \hline
+        KROS & 12 \\
+        \hline
+        KROS & 12 \\
+        \hline
+    \end{tabular}
+    
+   \columnbreak
+
+    \begin{tabular}{|c|c|}
+        \hline
+       1 & program \\
+       \hline
+       2 & ; \\
+       \hline 
+       3 & $=$ \\
+       \hline
+       4 & ( \\
+       \hline
+       5 & ) \\
+       \hline
+       6 & , \\
+       \hline
+       7 & za \\
+       \hline
+       8 & do \\
+       \hline
+       9 & cini \\
+       \hline
+       10 & $+$ \\
+       \hline
+       11 & $-$ \\
+       \hline
+       12 & kraj\\
+       \hline
+    \end{tabular}
+    
+    \begin{tabular}{|c|c|}
+        \hline
+       1 & Phoebe \\
+       \hline
+       2 & j \\
+       \hline
+       3 & k \\
+       \hline
+       4 & ispisi \\
+       \hline
+       5 & i \\
+       \hline
+   \end{tabular}
+   
+   \begin{tabular}{|c|c|}
+        \hline
+       1 & 1 \\
+       \hline
+       2 & 3 \\
+       \hline
+       3 & 20 \\
+       \hline
+   \end{tabular}
+   
+   \end{multicols}
+   
+\end{solution}
+
+\begin{problem}{52}
+    Ostvaren je program simulator leksičkog analizatora zasnovan na tablici prijelaza DKA s jednostavnim postupkom oporavka od pogreške. Simulator prepoznaje dva niza: $AUTO$ i $AUTOMOBIL$. Na ulazu automata pojavljuje se niz $AUTOMATSKIAUTOMOBIL$. Odredite koje će nizove simulator leksičkog analizatora prepoznati i hoće li ispisati neke greške. Potrebno je i ispisati ablicu stanja unutarnjih kazaljki (početak, završetak i posljednji) programa simulatora za svaki učitani znak. 
+\end{problem}
+
+\begin{solution}
+    \begin{tabular}{|c|c|c|c|c|}
+        \hline
+        početak  &  završetak & posljednji & izraz  & najdulji poznati prefiks \\
+        \hline
+         1 & 0 & 1 & 0 & - \\
+        \hline
+         1 & 1 & 1 & 0 & - \\ 
+        \hline
+         1 & 2 & 1 & $r_x$ & $A$ \\ 
+        \hline
+         1 & 3 & 2 & $r_x$ & $AU$ \\
+        \hline
+         1 & 4 & 3 & $r_x$ & $AUT$ \\ 
+        \hline
+        1 & 5 & 4 & $r_x$ & $AUTO$ \\ 
+        \hline
+        5 & 5 & 5 & 0 & - \\
+        \hline
+        5 & 6 & 5 & 0 & $M$ \\
+        \hline
+        5 & 7 & 6 & 0 & $MA$ \\
+        \hline
+        $\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ \\
+        \hline
+        5 & 20 & 19 & 0 & $MATSKIAUTOMOBIL$ \\
+        \hline
+        6 & 6 & 6 & 0 & - \\
+        \hline
+        6 & 7 & 6 & $r_x$ & $A$ \\
+        \hline
+        6 & 8 & 7 & 0 & $AT$ \\
+        \hline
+        $\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ \\
+        \hline
+        6 & 20 & 19 & 0 & $ATSKIAUTOMOBIL$ \\
+        \hline
+        7 & 7 & 7 & 0 & - \\
+        \hline
+        7 & 8 & 7 & 0 & $T$ \\
+        \hline
+        7 & 9 & 8 & 0 & $TS$\\
+        \hline
+        $\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ \\
+        \hline
+        7 & 20 & 19 & 0 & $TSKIAUTOMOBIL$ \\
+        \hline
+        $\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ \\
+        \hline
+        11 & 12 & 11 & $r_x$ & $A$\\
+        \hline
+        $\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ \\
+        \hline
+        11 & 20 & 19 & $r_x$ & $AUTOMOBIL$\\
+        \hline
+    \end{tabular}
+\end{solution}
+
+\newpage
+
+\begin{problem}{56}
+    Zadan je jezik L koji sadrži cjelobrojne aritmetičke izraze. Leksičke su jedinke jezika L varijable, konstante, binarni operatori $\{+, -, *, /\}$, okrugle zagrade i unarni operatori $\{-, ++, --\}$. Varijable se sastoje od slova i brojki te moraju započinjati slovom, a konstante su cjelobrojne. Unarni operator $-$ označava negaciju varijable ili konstante. Unarni operatori $++$ i $--$ imaju značenje kao u jeziku C. Definirajte pravila leksičkog analizatora kojima se ulazni niz rastavlja na leksičke jedinke.
+\end{problem}
+
+\begin{solution}
+    \noindent 
+\begin{tabular}{|c|m{12.5cm}|m{4.35cm}|}
+    \hline
+    r1 & \centering $(a+b+\cdots + z)\left[(a+b+\cdots + z) + (0 + 1+ \cdots + 9)\right]^*$ & {\small varijable} \\
+    \hline
+    r2 & \centering $(0 + 1 + \cdots + 9)^+$ & {\small konstante} \\
+    \hline
+    r3 & \centering $(\; | \; ) \; | \; + \: | \; - \; | \; * \; | \; /$ & {\small zagrade i binarni operatori} \\
+    \hline
+    r4 & \centering $= \; -$ & {\small uđi u stanje UNARNI; ODBACI} \\
+    \hline
+    r5 & \centering $= (++ \; | \; --) $ & uđi u stanje UNARNI; ODBACI \\
+    \hline
+    r6 & \centering {\small <UNARNI>} $- (a+b+\cdots + z)\left[(a+b+\cdots + z) + (0 + 1+ \cdots + 9)\right]^*$ & {\small izađi iz stanja UNARNI} \\
+    \hline
+    r7 & \centering {\small <UNARNI>} $- (0 + 1 + \cdots + 9)^+$ & izađi iz stanja UNARNI\\
+    \hline
+    r8 & \centering {\small <UNARNI>} $(++ \; | \; --) (a+b+\cdots + z)\left[(a+b+\cdots + z) + (0 + 1+ \cdots + 9)\right]^*$ & {\small izađi iz stanja UNARNI} \\
+    \hline
+    r9 & \centering {\small <UNARNI>} $(++ \; | \; --) \; (0 + 1 + \cdots + 9)^+$ & izađi iz stanja UNARNI \\
+    \hline
+\end{tabular}
+
+\end{solution}
+
+\begin{problem}{57}
+    U postupku sintaksne analize programskog jezika X potrebno je razlikovati dekadske, oktalne i heksadekadske pozitivne cjelobrojne konstante. Napišite regularne izraze koji će omogućiti ispravno određivanje klase cjelobrojne konstante u leksičkoj analizi. Oktalne konstante započinju znamenkom 0 (npr. 0134, 071 i 00032). Dopušteno je da dekadske konstante započinju vodećim nulama ako sadrže barem jednu znamenku 8 ili 9 (dekadske su konstante npr. 00039, 488 i 455). Heksadekadske konstante započinju nizom 0x i dalje sadrže dekadske znamenke i mala slova a, b, c, d, e, f (npr. 0x13a, 0x043f i 0x00fed). 
+\end{problem}
+
+\begin{solution}
+    \noindent \uwave{oktalne}: $0(0 + 1 + 2 + \cdots + 7)^+$\\
+    \uwave{dekadske}: $\left [0^+(1+2+\cdots + 7)^*(8+9)^+(1+2+\cdots + 9)^* \right] + (1+2+ \cdots + 9)(0+1+2+\cdots + 9)^*$\\
+    \uwave{heksadekadske}: $0x(0 + 1+ 2+ \cdots + 9 + a + \cdots + f)(0 + 1+ 2+ \cdots + 9 + a + \cdots + f)^*$
+\end{solution}
+
+\newpage
+
+\begin{problem}{58}
+    Prikažite postupak obrade i izlaz leksičkog analizatora zasnovanog na regularnim izrazima iz tablice na sljedećim ulaznim nizovima (obrada svakog niza je nezavisna): $aabab$, $ababbba$ i $abababc$. \\
+    
+    \begin{tabular}{|c|c|c|}
+        \hline
+         r1 & $aab(c)*$  & ispiši(”r1”)\\
+        \hline
+         r2 &  $(a)^*b$ & ispiši(”r2”)\\
+        \hline
+         r3 &  $abab$ & ispiši(”r3”)\\
+        \hline
+         r4 & $ab/c$ &  ispiši(”r4”)\\
+        \hline
+         r5 & $ababb$ & uđi u stanje S; ODBACI; \\
+        \hline
+         r6 & $bbb$ & ispiši("r6")\\
+        \hline
+         r7 & $<S> bba$ & ispiši("r7"); izađi iz stanja S;\\
+        \hline
+         r8 & $(c)*$ & ispiši("r8") \\
+        \hline
+         
+    \end{tabular}
+\end{problem}
+
+\begin{solution}
+    \noindent $aabab \xrightarrow[]{}$ r1 (zadovoljava i r2, ali je r1 napisan prije), r2\\
+    $ababbba \xrightarrow[]{}$ r3, r7 (r5 je osigurao promjenu stanja u stanje $S$, ali zbog ONEMOGUĆI se ne primjenjuje)\\
+    $abababc \xrightarrow[]{}$ r3, r2, r8 (r2 ima prednost pred r4)
+\end{solution}
+
+\begin{problem}{59}
+     Prikažite postupak obrade i izlaz leksičkog analizatora zasnovanog na regularnim izrazima iz tablice (ista kao i tablica u zadatku 58) na sljedećim ulaznim nizovima (obrada svakog niza je nezavisna): $aababcaaab$ i $ccababbba$. 
+\end{problem}
+
+\begin{solution}
+    \noindent $aababcaaab \xrightarrow[]{}$ r1 ($aab$), r2 ($ab$), r8 ($c$), r2 ($aaab$)\\
+    \noindent $ccababbba \xrightarrow[]{}$ r8 ($cc$), r3 ($abab$), r7 ($bba$)
+\end{solution}
+
+\begin{problem}{60}
+    Prikažite postupak obrade i izlaz leksičkog analizatora zasnovanog na regularnim izrazima iz tablice na sljedećim ulaznim nizovima (obrada svakog niza je nezavisna): $aab$, $aaa\%\%b$ i $b\#\%\%$. \\
+    
+    \begin{tabular}{|c|c|c|}
+        \hline
+         r1 & $\%\%b$  & ispiši(”r1”)\\
+        \hline
+         r2 &  $\%\%ba^*$ & ispiši(”r2”)\\
+        \hline
+         r3 &  $a$ & ispiši(”r3”)\\
+        \hline
+         r4 & $aa / b$ &  ispiši(”r4”)\\
+        \hline
+         r5 & $aaa$ & ispiši("r5") \\
+        \hline
+         r6 & $b$ & ispiši("r6")\\
+        \hline
+         r7 & $b(\%|\#)$ & uđi u stanje S; ODBACI\\
+        \hline
+         r8 & $ <S>\# \%\%$ & ispiši("r8") izađi iz stanja S\\
+        \hline
+    \end{tabular}
+\end{problem}
+
+\begin{solution}
+    \noindent $aab \xrightarrow[]{}$ r4 ($aa$), r6 ($b$)\\
+    $aaa\%\%b \xrightarrow[]{}$ r5 ($aaa$), r1 ($\%\%b$)\\
+    $b\#\%\% \xrightarrow[]{}$ r6 ($b$), r8 ($\#\%\%$)
+\end{solution}
+
+\begin{problem}{61}
+    Na osnovi navedenih pravila odredite i objasnite izlaz leksičkog analizatora za nizove $yyy++x$, $yyx$ i $x!++$.\\
+
+    \begin{tabular}{|c|c|c|}
+        \hline
+         r1 & $++x$  & ispiši(”r1”)\\
+        \hline
+         r2 &  $++xy^*$ & ispiši(”r2”)\\
+        \hline
+         r3 &  $y$ & ispiši(”r3”)\\
+        \hline
+         r4 & $yy/x$ &  ispiši(”r4”)\\
+        \hline
+         r5 & $yyy$ & ispiši("r5") \\
+        \hline
+         r6 & $x$ & ispiši("r6")\\
+        \hline
+         r7 & $x(+|!)$ & uđi u stanje S; ODBACI\\
+        \hline
+         r8 & $ <S>!++$ & ispiši("r8") izađi iz stanja S\\
+        \hline
+    \end{tabular}
+\end{problem}
+
+\begin{solution}
+    \noindent $yyy++x \xrightarrow[]{}$ r5 ($yyy$), r1 ($++x$)\\
+    $yyx \xrightarrow[]{}$ r4 ($yy$), r6 ($x$)\\
+    $x!++ \xrightarrow[]{}$ r6 ($x$), r8 ($!++)$
+\end{solution}
+
+\begin{problem}{62}
+    Prikažite postupak obrade i izlaz leksičkog analizatora zasnovanog na regularnim izrazima na sljedećim ulaznim nizovima: $sedam78ggg$ i $gggosam8sedam7devet8$. \\
+
+    \begin{tabular}{|c|c|}
+        \hline
+        r1 & $sedam | 7$ \\
+        \hline
+        r2  & $osam | 8$ \\
+        \hline
+        r3 & $devet | 9$ \\
+        \hline
+        r4 & $(a|b|\dots |z)^*(0|1|\dots |9)^*$\\
+        \hline
+    \end{tabular}
+\end{problem}
+
+\begin{solution}
+    \noindent $sedam78ggg \xrightarrow[]{}$ r4 ($sedam78$), r4 ($ggg$)\\
+    $gggosam8sedam7devet8 \xrightarrow[]{}$ r4 ($gggosam8$), r4 ($sedam7$), r4 ($devet8$)
+\end{solution}
+
+\newpage
+
+\section{Sintaksna analiza}
+
+\begin{problem}{65}
+    Definirajte relacije \textit{IspodZnaka} i \textit{ReduciranZnakom} za parsiranje tehnikom \textit{Pomakni-Pronađi}.
+\end{problem}
+
+\begin{solution}
+    \noindent Za znakove $A$ i $x$ vrijedi relacija \textit{IspodZnaka}($A, x$) ako i samo ako je ispunjen jedan od sljedećih uvjeta:
+    \begin{enumerate}
+        \item Znak $A$ je izravo ispred znaka $B$ na desnoj strani barem jedne produkcije gramatike, \\ \textit{IzravnoIspredZnaka}($A, B$), a znak $x$ započinje barem jedan niz generiran iz $B$, $x \in$ ZAPOČINJE($B$)
+        \item $A$ je oznaka dna stoga $\nabla$ i $x \in$ ZAPOČINJE($S$), $S$ početni nezavršni znak gramatike
+    \end{enumerate}
+
+    \noindent Za znakove $A$ i $x$ vrijedi relacija \textit{ReduciranZnakom}($A, x$) ako i samo ako je ispunjen jedan od sljedećih uvjeta:
+    \begin{enumerate}
+        \item Znak $A$ krajnje je desni znak produkcije $L \xrightarrow[]{} \alpha \, A$, a znak $x$ slijedi znak $L$ u barem jednom nizu generiranom iz početnog nezavršnog znaka gramatike $S$ tj. $x \in$ SLIJEDI($L$)
+        \item $A$ je početni nezavršni znak gramatike, $S$, a $x$ je oznaka kraja niza, $\bot$
+    \end{enumerate}
+\end{solution}
+
+\begin{problem}{66}
+    Navedite uvjete pod kojima je kontekstno neovisna gramatika ujedno i $S$-gramatika.
+\end{problem}
+
+\begin{solution}
+    \begin{enumerate}
+        \item Desna strana bilo koje produkcije započinje završnim znakom gramatike.
+        \item Desna strana niti jedne produkcije nije prazni niz $\varepsilon$.
+        \item Ako više produkcija ima isto nezavršni znak na lijevoj strani, onda desne strane tih produkcija započinju različitim završnim znakovima.
+    \end{enumerate}
+\end{solution}
+
+\begin{problem}{67}
+    Navedite uvjete pod kojima je kontekstno neovisna gramatika ujedno i $LL(1)$-gramatika. 
+\end{problem}
+
+\begin{solution}
+    \noindent Ako više produkcija ima isti nezavršni znak na lijevoj strani, onda njihovi skupovi $\mathrm{PRIMIJENI}$ nemaju zajedničkih elemenata.
+\end{solution}
+
+
+\begin{problem}{69}
+    Objasnite postupak određivanja relacija prednosti na temelju zadane gramatike.
+\end{problem}
+
+\begin{solution}
+    \begin{itemize}
+        \item $l  \Leftarrow d$ ako je na desnoj strani produkcije znak $l$ neposredno ispred nezavršnog znaka $C$, \\ $A \xrightarrow[]{} \cdots l \, C \cdots$ i ako $C$ generira međuniz u kojem je krajnje lijevi završni znak $d$ 
+        \item $l \iff d$ ako je na desnoj strani produkcije završni znak $l$ neposredno ispred završnog znaka $d$, $A \xrightarrow[]{} \cdots l \, d \cdots$ ili je između njih samo jedan nezavršni znak, $A \xrightarrow[]{} \cdots l \, B \, d \cdots$ 
+        \item $l \Rightarrow d$ ako je na desnoj strani produkcije nezavršni znak $B$ neposredno ispred završnog znaka $d$, $A \xrightarrow[]{} \cdots B \, d \cdots$ i ako nezavršni znak $B$ generira međuniz u kojemu je krajnje desni završni znak $l$
+    \end{itemize}
+\end{solution}
+
+\begin{problem}{70}
+    U pseudokodu sličnom jeziku C napišite algoritam parsiranja tehnikom prednosti operatora.
+\end{problem}
+\singlespacing
+
+\begin{solution}
+\vspace{-0.5cm}
+    \noindent Postavi KAZALJKU da pokazuje na krajnje lijevi znak niza $w\bot$\\
+    \underline{dok}(1) \{\\
+    \indent \underline{ako} ZnakNaVrhuStoga == $\nabla$ $\&\&$ Ulaz == $\bot$\\
+    \indent \indent Prihvati();\\
+    \indent \underline{inače} \{\\
+    \indent \indent \underline{ako} ($x \Leftarrow y \; || \; x \Leftrightarrow y$) \{ \\
+    \indent \indent \indent StaviNaStog($y$);\\
+    \indent \indent \indent Pomakni KAZALJKU na sljedeći znak ulaznog niza; \\
+    \indent  \indent \} \underline{inače} \underline{ako} ($x \Rightarrow y$)) \{ \\
+    \indent \indent \indent UzmiSVrhaStoga(1 znak);\\
+    \indent  \indent \indent \underline{dok} !(ZnakNaVrhuStoga $\Leftarrow$ UzetiZnak)\\
+    \indent \indent \indent \indent UzmiSVrhaStoga(1 znak);\\
+    \indent \indent \}\\
+    \indent \indent \underline{inače}\\
+    \indent \indent \indent Odbaci();\\
+    \indent  \} \\
+    \}
+\end{solution}
+
+\onehalfspacing
+
+\begin{problem}{71}
+    Navedite i kratko opišite postupke pretvorbe produkcija u produkcije $LL(1)$-gramatike.
+\end{problem}
+
+\begin{solution}
+    \begin{enumerate}
+        \item Lijevo izlučivanje - vidi zadatak 72
+        \item Uklanjanje lijeve rekurzije - vidi zadatak 73
+        \item Zamjena nezavršnih znakova - neka gramatika ima $n$ produkcija oblika $A \xrightarrow[]{} \alpha_\mathrm{i}$, $\mathrm{i} = 1, 2, \dots, n$ i zadana je produkcija oblika $B \xrightarrow[]{} \beta \, A \, \gamma$ $\Rightarrow$ tih $n + 1$ produkcija zamijeni se sa sljedećih $n$ produkcija $B \xrightarrow[]{} \beta \, \alpha_\mathrm{i} \, \gamma$, $\mathrm{i} = 1, 2, \dots, n$
+    \end{enumerate}
+\end{solution}
+
+\begin{problem}{72}
+    Općenito definirati postupak lijevog izlučivanja koji se koristi pri pretvorbi produkcija u produkcije $LL(1)$-gramatike.
+\end{problem}
+
+\begin{solution}
+    \noindent Neka gramatika ima $n$ produkcija oblika $A \xrightarrow[]{} \alpha \, \beta_\mathrm{i}$, $\mathrm{i} = 1, 2, \dots , n$. Skupovi PRIMIJENI različitih nizova $\beta_\mathrm{i}$ nemaju zajedničkih znakova. Onda se prethodnih $n$ produkcija zamjenjuje sljedećim $n + 1$ produkcijama: $A \xrightarrow{} \alpha \, \langle \mathrm{nastavak} \rangle $, $\langle \mathrm{nastavak}  \rangle \xrightarrow[]{} \beta _ \mathrm{i}$, $\mathrm{i} = 1, 2, \dots, n$.
+\end{solution}
+
+\begin{problem}{73}
+    Objasnite postupak uklanjanja lijeve rekurzije tijekom pretvorbe produkcija u $LL(1)$ oblik.
+\end{problem}
+
+\begin{solution}
+    \noindent Produkcija je lijevo rekurzivna ako je nezavršni znak lijeve strane produkcije istodobno i na krajnje lijevom mjestu desne strane produkcije, $S \xrightarrow[]{} S \, \alpha$. Neka je za nezavršni znak $A$ zadano $m$ (izravno) lijevo rekurzivnih produkcija $A \xrightarrow[]{} A \, \alpha_ \mathrm{i}$, $\mathrm{i} = 1,2, \dots, n$ i $n$ produkcija koje nisu izravno lijevo rekurzivne $A \xrightarrow[]{} \beta_ \mathrm{j}$, $\mathrm{j} = 1, 2, \dots, n$. Lijevo rekurzivne produkcije zamijene se produkcijama: \\$A \xrightarrow[]{} \beta_\mathrm{j} \, \langle Ponovi \rangle$ \hfill $\langle Ponovi \rangle \xrightarrow[]{} \alpha_\mathrm{i} \, \langle Ponovi \rangle$ \hfill $\langle Ponovi \rangle \xrightarrow[]{} \varepsilon$ \hfill $\langle Ponovi \rangle$ novi nezavršni znak
+\end{solution}
+
+\begin{problem}{74}
+     Navedite algoritam za izračunavanje ZAPOČINJE skupova za produkcije.
+\end{problem}
+
+\begin{solution}
+    \begin{enumerate}
+        \item Računanje relacije \textit{ZapočinjeIzravnoZnakom}: \\
+         za znakove $A$ i $B$ vrijedi \textit{ZapočinjeIzravnoZnakom}($A, B$) ako i samo ako $A \xrightarrow[]{} \alpha \, B \, \beta$, $\alpha \overset{*}{\Rightarrow} \varepsilon$
+        \item Računanje relacije \textit{ZapočinjeZnakom}: \\
+        za znakove $A$ i $B$ vrijedi \textit{ZapočinjeZnakom}($A, B$) ako i samo ako je iz znaka $A$ moguće generirati niz koji započinje znakom $B$; napomena: \uwave{relacija \textit{ZapočinjeZnakom} jest refleksivna}
+
+        \item 
+        \begin{enumerate}
+            \item Računanje skupova ZAPOČINJE za nezavršne znakove\\
+            završni je znak $b$ u skupu ZAPOČINJE($X$) $\iff$ vrijedi \textit{ZapočinjeZnakom}($X$, $b$)
+            \item Računanje skupova ZAPOČINJE za produkcije\\
+            ZAPOČINJE($X\xrightarrow[]{} Z_1 Z_2 \dots Z_n Y\alpha$) \\ 
+            $=$ ZAPOČINJE($Z_1$) $\cup$ ZAPOČINJE($Z_2$) $\cup \dots \cup$ ZAPOČINJE($Z_n$) $\cup$ ZAPOČINJE($Y$) 
+         \end{enumerate}
+    \end{enumerate}
+\end{solution}
+
+
+\begin{problem}{75}
+    Opišite algoritam za izračunavanje relacije \textit{Ispred}.
+\end{problem}
+
+\begin{solution}
+    \begin{enumerate}
+        \item Računanje reacije \textit{IzravnoIspredZnaka}:\\
+        \textit{IzravnoIspredZnaka}($A$, $B$) $\iff$ $D \xrightarrow[]{} \alpha \, A \, \beta \, B \, \gamma$, $\beta \overset{*}{\Rightarrow} \varepsilon$
+
+        \item Računanje relacije \textit{IzravniKraj}:\\
+        \textit{IzravniKraj}($B$, $A$) $\iff$ $A \xrightarrow{} \alpha \, B \, \beta$, $\beta \overset{*}{\Rightarrow} \varepsilon$
+
+        \item Računanje relacije \textit{Kraj}:\\
+        \textit{Kraj}($A$, $B$) $\iff$ iz znaka $A$ moguće generirati niz koji završava znakom $B$
+
+        \item Računanje relacije \textit{Ispred}:\\
+        \textit{Ispred}($A$, $B$) $\iff$ \textit{Kraj}($A$, $X$) $\land$ \textit{IzravnoIspredZnaka}($X$, $Y$) $\land$ \textit{ZapočinjeZnakom}($Y$, $B$)
+        
+    \end{enumerate}
+\end{solution}
+
+\begin{problem}{76}
+    Navedite korake u računanju PRIMIJENI skupova za produkcije.
+\end{problem}
+
+\begin{solution}
+    \noindent Skupovi PRIMIJENI računaju se primjenom izračunatih skupova ZAPOČINJE i SLIJEDI. Ako produkcija ne generira prazni niz $\varepsilon$, onda se PRIMIJENI određuje pomoću skupa ZAPOČINJE. Inače, skup PRIMIJENI računa se kao SLIJEDI($\varepsilon$) $\cup$ ZAPOČINJE(lijeva strana produkcije).
+\end{solution}
+
+
+\begin{problem}{77}
+    Opišite postupak računanja skupova SLIJEDI za prazne nezavršne znakove.
+\end{problem}
+
+\begin{solution}
+    \noindent Na temelju tablice \textit{Ispred} moguće je izravno odrediti skupove SLIJEDI za sve prazne nezavršne znakove. 
+\end{solution}
+
+
+\begin{problem}{78}
+    Navedite i kratko opišite podatkovnu strukturu sintaksnog analizatora.
+\end{problem}
+
+\begin{solution}
+    \noindent Podatkovnu strukturu sintaksnog analizatora čine globalni i lokalni podaci. Globalnu strukturu sačinjavaju tablica znakova (KROS, identifikatora i uniformnih znakova) i stog (za gradnju sintaksnog stabla). Lokalna struktura podataka sintaksnog analizatora gradi se za potrebe parsiranja.
+\end{solution}
+
+\begin{problem}{79}
+    Opišite kako se izvodi nadziranje i oporavak od pogrešaka kod $LR$-parsiranja. 
+\end{problem}
+
+\begin{solution}
+    \noindent \uwave{Postupak traženja sinkronizacijskog znaka} prekida sintaksnu analizu programske cjeline u kojoj je pronađena pogreška.  \uwave{Postupak oporavka od pogreške} uzima sa stoga dio stanja koji pripada analizi nezavršnog znaka koji zadaje cjelinu u kojoj je došlo do sintaksne pogreške. Kazaljka koja se koristi tijekom čitanja pomiče se na znak koji slijedi nakon znakova generiranih iz problematičnog nezavršnog znaka i u ulaznom se spremiku traži znak ulančavanja naredbi (npr. $;$) ili oznaka kraja bloka naredbi (npr. $\}$).
+    U \uwave{postupku lokalnih promjena} svi elementi tablice $LR$ parsera koji označavaju akciju \textit{Odbaci}() zasebno se analiziraju i na temelju pravila izvornog jezika odredi se najvjerojatnija pogreška korisnika. Na temelju pretpostavljene pogreške odrede se akcije promjene sadržaja stoga i ulaznog niza.
+\end{solution}
+
+\begin{problem}{81}
+    Navedite i definirajte korake algoritma izgradnje kanonskog $LR(1)$-parsera
+\end{problem}
+
+\begin{solution}
+    \noindent Iz produkcija gramatike najprije se napravi $\varepsilon$-NKA pa zatim DKA. Retci tablica \textit{Akcija} i \textit{NovoStanje} označavaju se završnim znakovima; stupci \textit{Akcija} označavaju se završnim znakovima i oznakom kraja niza $\bot$, a stupci \textit{NovoStanje} nezavršnim znakovima gramatike. \\
+    Tablica \textit{Akcija} označava se na sljedeći način:
+    \begin{enumerate}
+        \item ako je $LR(1)$ stavka $A \xrightarrow[]{} \alpha$\textbullet$a\beta, \, \{a_1, a_2, \dots, a_n\}$ u stanju $s$ i ako je $\delta(s, a) = t$ prijelaz DKA, onda se za završni znak gramatike $a$ i stanje $s$ definira \textit{Akcija}[$s, a$] = \textit{Pomakni}($t$)
+
+        \item ako je $LR(1)$ stavka $A \xrightarrow[]{} \alpha$\textbullet, $\{a_1, a_2, \dots, a_n\}$ u stanju $s$ onda se za sve završne znakove $a$ koji su iz skupa $\{a_1, a_2, \dots, a_n\}$ i stanje $s$ definira \textit{Akcija}[$s, a$] = \textit{Reduciraj}($A \xrightarrow[]{} \alpha$)
+
+        \item ako je $LR(1)$ stavka $S' \xrightarrow[]{} S$\textbullet, $\{\bot\}$ u stanju $s$ onda se za oznaku kraja niza $\bot$ i stanje $s$ definira \textit{Akcija}[$s, \bot$] = \textit{Prihvati}()
+    \end{enumerate}
+
+    \noindent Tablica \textit{NovoStanje} popunjava se na sljedeći način:
+    \begin{enumerate}
+        \item Ako je $\delta(s, A) = t$ prijelaz DKA, onda se za nezavršni znak $A$ i stanje $s$ definira \textit{NovoStanje}[$s, A$] = \textit{Stavi}(t)
+    \end{enumerate}
+    
+    \noindent Svi neoznačeni elementi tablice označavaju akciju \textit{Odbaci}(). Početno stanje označeno je $LR(1)$ stavkom $S' \xrightarrow[]{}$\textbullet$S, \, \{\bot\}$.
+\end{solution}
+
+\begin{problem}{82}
+    Opišite postupak izgradnje potisnog automata za $S$-gramatiku. 
+\end{problem}
+
+\begin{solution}
+    \noindent $G = (V,T,P,S) \rightarrow M = (Q, \Sigma, \Gamma, \delta, q_0, Z_0, \varnothing)$\\ potisni automat ima samo jedno stanje, $Q = \{q_0\}$\\
+    skup ulaznih znakova proširen je oznakom kraja niza, $\Sigma = T  \cup \{\bot\}$\\
+    skup znakova potisnog automata proširen je oznakom dna stoga, $\Gamma = \{\nabla \} \cup V \cup T'$, $T'$ - svi završni znakovi koji su na desnim stranama produkcija, ali ne isključivo na krajnje lijevim mjestima\\
+    na početku rada na stogu je oznaka dna stoga, $\nabla$ i početni nezvaršni znak $S$\\
+    funkcija prijelaza definira se dvodimenzionalnom tablicom: retci su znakovi stoga, stupci ulazni znakovi\\
+    elementi (ćelije) tablice označavaju akciju PA na ulaznom nizu i akciju na stogu \\
+    tablica se popunjava na sljedeći način:  \\
+    \indent $A \xrightarrow[]{} b \alpha$, $\alpha$ niz završnih i nezavršnih znakova gramatike $\Rightarrow$ \textit{Zamijeni}$(\alpha^r)$; \textit{Pomakni};\\
+    \indent $A \xrightarrow[]{} b$ $\Rightarrow$ \textit{Izvuci}; \textit{Pomakni};\\
+    \indent element tablice $(\nabla, \bot)$ $\Rightarrow$ \textit{Prihvati};\\
+    \indent svi ostali elementi tablice $\Rightarrow$ \textit{Odbaci};
+\end{solution}
+
+\begin{problem}{83}
+    Definirajte $LL(1)$-gramatiku i kratko opišite konstrukciju potisnog automata za $LL(1)$-gramatiku.
+\end{problem}
+
+\begin{solution}
+    \noindent $LL(1)$-gramatika dobiva se proširenjem produkcija $Q$-gramatike produkcijama koje na desnoj strani na krajnje lijevom mjestu mogu imati nezavršne znakove. Tablica se popunjava na sljedeći način: 
+
+    \begin{itemize}
+        \item vrijede pravila kao i kod $S$-gramatike za produkcije oblika $A \xrightarrow[]{} b\alpha$ i $A \xrightarrow[]{} b$
+
+        \item $A \xrightarrow[]{} \varepsilon \Rightarrow$ u redak tablice $A$ i sve stupce određene znakovima iz skupa $\mathrm{PRIMIJENI}(A \xrightarrow[]{} \varepsilon)$ zapisuju se akcije \textit{Izvuci}; \textit{Zadrži};
+
+        \item $A \xrightarrow[]{} \alpha$, niz $\alpha$ započinje nezavršnim znakom $\Rightarrow$ u redak tablice $A$ i sve stupce određene znakovima skupa $\mathrm{PRIMIJENI}(A \xrightarrow[]{} \alpha)$ zapisuju se akcije \textit{Zamijeni}($\alpha ^ r$); \textit{Zadrži};
+        
+        \item Ako je za nezavršni znak $A$ zadana prazna produkcija i ako u prethodnim koracima nije popunjen neki od elemenata u retku $A$, onda se za taj element tablice definira akcija \textit{Odbaci} ili akcije $\varepsilon$-produkcije \textit{Izvuci}; \textit{Zadrži};
+
+        \item za element tablice $[b,b]$, $b$ završni znak gramatike, $b \in \Gamma$ $\Rightarrow$ \textit{Izvuci}; \textit{Pomakni};
+    \end{itemize}        
+\end{solution}
+
+
+\begin{problem}{84}
+    Navedite i općenito objasnite (ne na primjeru) sve akcije potisnog automata konstruiranog na osnovi $LL(1)$ gramatike.
+\end{problem}
+
+\begin{solution}
+    \begin{enumerate}
+        \item \textit{Zamijeni}($\alpha ^ r$) - nezavršni znak koji je na vrhu stoga zamjenjuje se nizom $\alpha ^ r$
+        \item \textit{Izvuci} - uzima se znak koji je na vrhu stoga  
+        \item \textit{Pomakni} - glava za čitanje pomiče se na sljedeći znak ulaznog niza
+        \item \textit{Zadrži} - glava za čitanje ne miče se na sljedeći znak ulaznog niza
+        \item \textit{Prihvati} - ulazni niz se prihvaća
+        \item \textit{Odbaci} - ulazni niz se ne prihvaća
+    \end{enumerate}
+\end{solution}
+
+\begin{problem}{85}
+     Navedite zadatke sintaksnog analizatora.
+\end{problem}
+
+\begin{solution}
+    \begin{enumerate}
+        \item Grupiranje uniformnih znakova u sintaksne cjeline (izrazi, naredbe, blokovi narebi, program)
+        \item Provjera sintaksnih pravila (struktura izraza, naredbi i cjelokupnog programa)
+        \item Stvara hijerarhiju sintaksnih cjelina (jednoznačno se određuje za sve sintaksne cjeline)
+        \item Određivanje mjesta i opis pogreške
+        \item Izvodi postupak oporavka od pogreške
+        \item Gradi sintaksno stablo
+    \end{enumerate} 
+\end{solution}
+
+\begin{problem}{86}
+     Općenito definirajte ulaze i izlaze iz programa generatora sintaksnog analizatora i programa sintaksnog analizatora ako je sintaksni analizator ostvaren kao zasebni prolaz jezičnog procesora.
+\end{problem}
+
+\begin{solution}
+    \noindent Generator sintaksnog analizatora na ulaz prima opis procesa sintaksnog analizatora (nezavršne i završne znakove gramatike, sinkronizacijski završni znakovi i produkcije gramatike). Izlaz generatora bit će izvorni kod (u jeziku izgradnje) sintaksnog analizatora. Sintaksni analizator na ulazu dobiva niz leksičkih jedinki koje čita i stvara sintaksno stablo (koje je izlaz sintaksnog analizatora).
+\end{solution}
+
+\begin{problem}{87}
+    Objasnite pojmove parsiranje, parsiranje od dna prema vrhu i parsiranje od vrha prema dnu.
+\end{problem}
+
+\begin{solution}
+    \noindent \uwave{parsiranje} $\xrightarrow[]{}$ postupak prepoznavanja niza i gradnja generativnog stabla na temelju zadanih produkcija kontekstno neovisne gramatike \\
+    \uwave{parsiranje od vrha prema dnu} $\xrightarrow[]{}$ gradnja generativnog stabla započinje vrhom koji je označen početnim nezavršnim znakom gramatike i nastavlja se prmjenom produkcija gramtike na čvorove generativnog stabla koji su označeni nezavršnim znakovima gramatike \\
+    \uwave{parsiranje od dna prema vrhu} $\xrightarrow[]{}$ gradnja generativnog stabla započinje listovima koji su označeni završnim znakovima gramatike i nastavlja se primjenom desnih strana produkcija gramatike na prethodno izgrađene čvorove
+\end{solution}
+
+\begin{problem}{88}
+    Neovisno poredajte gramatike $LL(1)$, $S$ i $Q$ te gramatike $LALR(1)$, $SLR(1)$, $LR(0)$ i $LR(1)$ uzlazno po općenitosti.
+\end{problem}
+
+\begin{solution}
+    \noindent $S$ < $Q$ < $LL(1)$ gramatika \\
+    $LR(0)$ < $SLR(1)$ < $LALR(1)$ < $LR(1)$ gramatika
+\end{solution}
+
+\begin{problem}{89}
+     Objasnite namjenu programa Yacc te dijelova ulazne datoteke za program Yacc.
+\end{problem}
+
+\begin{solution}
+    \noindent Program Yacc primjer je generatora parsera, a koristi se i za rješavanje problema koje je moguće svesti na problem prihvaćanja kontekstno neovisnih jezika. Ulaznu datoteku čini opis sintaksnog analizatora i ona se sastoji od deklaracija, pravila prevođenja i pomoćne $C$ procedure.
+\end{solution}
+
+\begin{problem}{90}
+    Ukratko objasnite postupak oporavka od pogreške kod $LR$-parsiranja koji se zasniva na traženju sinkronizacijskih znakova.
+\end{problem}
+
+\begin{solution}
+    \noindent Postupak traženja sinkronizacijskog znaka prekida sintaksnu analizu programske cjeline u kojoj je pronađena pogreška. Na primjer, neka je parser pronašao pogrešku u sintaksnoj cjelini zadanoj nezavršnim znakom gramatike \texttt{<Naredba>}. Postupak oporavka od pogreške uzima sa stoga dio stanja koji pripada analizi nezavršnog znaka \texttt{<Naredba>}. Kazaljka koja se koristi tijekom čitanja pomiče se na znak koji slijedi nakon znakova generiranih iz problematičnog nezavršnog znaka i u ulaznom se spremiku traži znak ulančavanja naredbi (npr. $;$) ili oznaka kraja bloka naredbi (npr. $\}$). Nakon što se sa stoga uzmu stanja koja pripadaju analizi znaka \texttt{<Naredba>}, na stog se stavlja stanje $S$ za koje je
+    definirana akcija prijelaza u neko drugo stanje primjenom nezavršnog znaka \texttt{<Naredba>}. Na stog se stavlja stanje \textit{NovoStanje}[$S$, \texttt{<Naredba>}].
+\end{solution}
+
+\begin{problem}{91}
+    Navedite pet različitih vrsta sustava oznaka za opis sintaksnih pravila. 
+\end{problem}
+
+\begin{solution}
+    \noindent 1. BNF sustav oznaka\\
+    2. COBOL sustav oznaka\\
+    3. sintaksna analiza primjenom Co-No tablica\\
+    4. kontekstno neovisna gramatika\\
+    5. regularni izrazi
+\end{solution}
+
+\begin{problem}{92}
+    Opišite postupak sintaksne analize zasnovane na tablici Co-No.
+\end{problem}
+
+\begin{solution}
+    \noindent Ispravnost izvornog programa i prevođenje u strojni program zasniva se na poznavanju dva podatka: desnog i lijevog operatora. Postupak analize izvornog programa i generiranja ciljnog programa zadaje se dvodimenzionalnom tablicom veličine $N \times N$, $N$ broj operatora koji se koriste u izvornom programu. Ako je par operatora dozvoljen sintaksnim pravilima, element tablice određen tim parom operatora označava jednu od akcija generatora ciljnog programa. U protivnom se u element tablice upisuje greška. (U naredbama je moguće zadati aritmetičke izraze koji imaju najviše dva operanda; koriste se operacije zbrajanja, oduzimanja, množenja i dijeljenja; znak pridruživanja je $\xrightarrow[]{}$).
+\end{solution}
+
+\begin{problem}{93}
+    Objasnite parsiranje od dna prema vrhu tehnikom \textit{Pomakni-Reduciraj}. Opišite tablice koje se koriste u parsiranju.
+\end{problem}
+
+\begin{solution}
+    \noindent Na temelju k\^{o}da samo jednog znaka na vrhu stoga moguće je odrediti koji je niz znakova na vrhu stoga pa je moguće primjeniti akciju \textit{Reduciraj} bez čitanja znakova na vrhu stoga i usporedbe sa znakovima desnih strana produkcija. \\
+    \uwave{tablica \textit{Pomakni/Reduciraj}} $\xrightarrow[]{}$ na temelju k\^{o}diranog znaka na vrhu stoga i pročitanog znaka ulaznog niza odlučuje o primjeni akcije \textit{Pomakni} ili \textit{Reduciraj}\\
+    \uwave{tablica \textit{Stavi}} $\xrightarrow[]{}$ određuje k\^{o}d znaka koji se stavlja na vrh stoga
+\end{solution}    
+
+
+\begin{problem}{94}
+    Opišite algoritme na kojima se zasnivaju postupci oporavka od pogreške kod sintaksne analize.
+\end{problem}
+
+\begin{solution}
+    \noindent Algoritam odbacivanja znakova ulaznog niza sve dok se ne prepozna jedan od sinkronizacijskih znakova $\xrightarrow[]{}$ sinkronizacijski znakovi su znakovi skupa SLIJEDI($A$), ZAPOČINJE($A$) ili definiraju sintaksne cjeline ($A$ nezavršni znak na vrhu stoga). Ako odbacivanjem znakova ulaznog niza pročita znak iz skupa SLIJEDI($A$) PA odbacuje $A$ s vrha stoga i nastavlja parsiranje ulaznog niza; ako pročita znak iz skupa ZAPOČINJE($A$) ostavlja $A$ na vrhu stoga. Za ostale algoritme vidi zadatake 79. i 90.
+\end{solution}
+
+\begin{problem}{95}
+    Objasnite parsiranje od dna prema vrhu metodom prednosti operatora, relaciju prednosti, akcije parsera i određivanje uzorka za zamjenu.
+\end{problem}
+
+\begin{solution}
+    \noindent \uwave{Relacija prednosti} određuje se za završne znakove $a$ i $b$. Tablica u kojoj su određene relacije prednosti koristi se tijekom parsiranja niza. \uwave{Akcije parsera} su \textit{Pomakni} (ako je prednost završnog znaka na vrhu stoga manja ili jednaka od prednosti znaka u ulaznom nizu) i \textit{Reduciraj} (prednost završnog znaka na vrhu stoga veća je od prednosti znaka u ulaznom nizu). \uwave{Uzorak za zamjenu} čine svi znakovi sa stoga koji imaju manju prednost od prethodno uzetog znaka.   
+\end{solution}
+
+\begin{problem}{96}
+    Objasnite razlike u ostvarenju parsera $LR(0)$, $SLR(1)$, $LALR$ i $LR(1)$ te navedite njihove prednosti i nedostatke.
+\end{problem}
+
+\begin{solution}
+    \begin{itemize}
+        \item $LR(0) \xrightarrow[]{}$ parsiranje od dna prema vrhu, čita još 0 znakova desne strane prije primjene redukcije 
+        \item $SLR(1) \xrightarrow[]{}$ prednost jednostavnost, nedostatak nemogućnost primjene na velik skup jezika
+        \item $LALR \xrightarrow[]{}$ nije programski zahtjevan kao $LR$ postupak, obuhvaća manji skup jezika od kanonskog $LR$ postupka
+        \item $LR(1) \xrightarrow[]{}$ čita još 1 znak ulaznog niza prije primjene redukcije
+    \end{itemize}
+\end{solution}
+
+
+\begin{problem}{97}
+    Objasnite konstrukciju $\varepsilon$-NKA u postupku izgradnje $SLR(1)$-parsera.
+\end{problem}
+
+\begin{solution}
+    \begin{enumerate}
+        \item stanja su sve $LR$ stavke gramatike i početno stanje $q_0$
+        \item skup ulaznih znakova unija je skupa nezavršnih i završnih znakova gramatike, $\Sigma = T \cup V$
+        \item sva stanja su u skupu prihvatljivih stanja, $F = Q$
+        \item funkcija prijelaza $\delta$ definira se kao:
+        \begin{itemize}
+            \item $\delta(q_0, \varepsilon) = \{S \xrightarrow[]{}$ \textbullet $\alpha \, | \, S \xrightarrow[]{} \alpha$ produkcija gramatike$\}$
+            \item $\delta((A \xrightarrow[]{} \alpha$\textbullet$X\beta, \, X) = \{A \xrightarrow[]{}\alpha X$\textbullet $\beta\}$, ako automat pročita znak $X$, točka se pomiče iza $X$, ($X$ završni ili nezavršni znak gramatike) 
+            \item $\delta(A \xrightarrow[]{} \alpha$\textbullet$X\beta, \, \varepsilon) = \{B \xrightarrow[]{}$ \textbullet $\gamma,  \, | \, B \xrightarrow[]{} \gamma$ produkcija gramatike$\}$, ako je nezavršni znak $B$ iza točke, onda $\varepsilon$-prijelaz pokreće analizu tog nezavršnog znaka
+        \end{itemize}
+    \end{enumerate}
+\end{solution}
+
+\begin{problem}{98}
+    Navedite i općenito objasnite sve četiri akcije potisnog automata konstruiranog na osnovi $LR(1)$ gramatike. 
+\end{problem}
+
+\begin{solution}
+    \begin{enumerate}
+        \item \textit{Pomakni}(t) - stavlja stanje $t$ na vrh stoga i pomiče glavu za čitanje na sljedeći znak ulaznog niza
+        \item \textit{Reduciraj}($A \xrightarrow[]{} \alpha$) - primjenjuje se redukcija (znakovi na vrhu stoga zamjenjuju se nezavršnim znakom)
+        \item \textit{Stavi}($t$) - na stog stavlja znak $t$ na temelju tablice \textit{NovoStanje}
+        \item \textit{Prihvati}() - ulazni se niz prihvaća
+    \end{enumerate}
+\end{solution}
+
+\begin{problem}{99}
+      Navedite zahtjeve koje mora ispuniti detekcija pogrešaka u sintaksnom analizatoru.
+\end{problem}
+
+\begin{solution}
+    \noindent Zahtjeva se da postupak određivanja mjesta i opisa pogrešaka precizno odredi mjesto pogreške, kratko i jasno opiše pogrešku i da značajno ne uspori rad sintaksnog analizatora. 
+\end{solution}
+
+\begin{problem}{100}
+    Objasnite sustav oznaka COBOL.
+\end{problem}
+
+\begin{solution}
+    \noindent \uwave{mala slova} = varijabla, \uwave{velika slova} = konstanta koju je moguće izostaviti, \uwave{podcrtana velika slova} = konstanta koju nije moguće izostaviti, \uwave{znak do znaka} = nadovezivanje, $[\;]$ = neobavezni izbor jedne od zadanih mogućnosti, $\{\;\}$ = obavezni izbor jedne od zadanih mogćnosti, $\dots$ = ponavljanje prethodne sintaksne cjeline; zapis pravila da je potrebno odabrati $($ ili $*$ i zatim proizvoljan broj znakova iz skupa $\{A, B, C, D, )\}$ u sustavu oznaka COBOL:
+    
+    \vspace{0.5cm}
+    
+    \begin{tabular}{c c c}
+    \(\left\{
+        \begin{array}{c}
+            ( \\
+            *
+        \end{array}
+    \right\}\)
+
+    & 
+
+    \( \left [ \left\{ 
+        \begin{array}{c}
+            A \\
+            B \\
+            C \\
+            D \\
+            )
+        \end{array}
+     \right\} \right ] \)
+
+    & 
+    \(\ldots\)
+    \end{tabular}
+
+\end{solution}
+
+\begin{problem}{101}
+    Opišite postupak oporavka od pogrešaka u sintaksnom analizatoru.
+\end{problem}
+
+\begin{solution}
+    \noindent Nakon što pronađe prvu pogrešku, sintaksni analizator nastavlja daljnju analizu u cilju pronalaženja ostalih pogrešaka. Tijekom postupka oporavka od pogreške sintaksni analizator promijeni stanje tako da omogući daljnji rad sintaksnog analizatora. Postupci oporavka od pogreške zasnivaju se na sljedećim algoritmima: \uwave{traženje sinkronizacijskog znaka} (izbacuje sve uniformne znakove do prvog sinkronizacijskog znaka),  \uwave{algoritam lokalnih promjena} (izbacuje, zamjenjuje ili dodaje uniformne znakove da dobije prefiks neanaliziranog dijela programa koji zadovoljava sintaksna pravila), \uwave{dodatne produkcije koje uključuju pogreške} i \uwave{algoritmi globalnih promjena} (minimiziraju broj promjena u cjelokupnom izvornom programu potrebnih da se postigne sintaksno ispravan izvorni program).
+\end{solution}
+
+\begin{problem}{102}
+    Objasnite akcije parsera od dna prema vrhu koji koristi tehniku \textit{Pomakni-Pronađi}. Opišite proturječja koja se pojavljuju.
+\end{problem}
+
+\begin{solution}
+    \noindent \textit{Pomakni} $\xrightarrow[]{}$ pročitani znak stavlja se na vrh stoga, kazaljka za čitanje znakova miče se jedan znak desno\\
+    \textit{Reduciraj} $\xrightarrow[]{}$ ako je na vrhu stoga uzorak zamjenu s vrha stoga uzimaju se znakovi desne strane produkcije i na vrh se stavi nezavršni znak lijeve strane produkcije\\
+    \textit{Prihvati}/\textit{Odbaci} $\xrightarrow[]{}$ prihvaćanje/ne prihvaćanje ulaznog niza\\
+    Dvije osnovne vrste proturječja su \textit{Pomakni}/\textit{Reduciraj} i \textit{Reduciraj}/\textit{Reduciraj}. 
+\end{solution}
+
+\newpage
+
+\begin{problem}{103}
+     Uklonite lijevu rekurziju iz sljedeće gramatike. \\
+     \texttt{<S> $\xrightarrow[]{}$ a<A>b<B>a | b<B>a<A>b}\\
+     \texttt{<A> $\xrightarrow[]{}$ <A>a<B>b | <B>a | a}\\
+     \texttt{<B> $\xrightarrow[]{}$ <A>b | b}
+\end{problem}
+
+\begin{solution}
+    \noindent 1. korak: \\
+   \texttt{<S> $\xrightarrow[]{}$ a<A>b<B>a | b<B>a<A>b}\\
+     \texttt{<A> $\xrightarrow[]{}$ <A>a<B>b | <A>ba | ba | a}\\
+     \texttt{<B> $\xrightarrow[]{}$ <A>a<B>bb | <B>ab | ab | b} \\
+     2. korak: \\
+     \texttt{<S> $\xrightarrow[]{}$ a<A>b<B>a | b<B>a<A>b}\\
+     \texttt{<A> $\xrightarrow[]{}$ ba<C> | a<C>}\\
+     \texttt{<C> $\xrightarrow[]{}$ a<B>b<C> | ba<C> | $\varepsilon$}\\
+     \texttt{<B> $\xrightarrow[]{}$ <A>a<B>bb | ab<D> | b<D>}\\
+     \texttt{<D> $\xrightarrow[]{}$  ab<D> | $\varepsilon$}\\
+     Potrebno još dodatno srediti da bi gramatika bila npr. \textit{LL(1)}.
+\end{solution}
+
+
+\begin{problem}{104}
+    Uklonite lijevu rekurziju iz dane gramatike.\\
+    \texttt{<S> $\xrightarrow[]{}$ a<A>b<B>a | b<B>a<A>b}\\
+    \texttt{<A> $\xrightarrow[]{}$ <B>b | b}\\
+    \texttt{<B> $\xrightarrow[]{}$ <A>a | <B>a<A>b | a}
+\end{problem}
+
+\begin{solution}
+    \noindent 1. korak:\\
+    \texttt{<S> $\xrightarrow[]{}$ a<A>b<B>a | b<B>a<A>b}\\
+    \texttt{<A> $\xrightarrow[]{}$ <A>ab | <B>a<A>bb | ab | b}\\
+    \texttt{<B> $\xrightarrow[]{}$ <B>ba | ba | <B>a<A>b | a}\\
+    2. korak:\\
+    \texttt{<S> $\xrightarrow[]{}$ a<A>b<B>a | b<B>a<A>b}\\
+    \texttt{<A> $\xrightarrow[]{}$ <B>a<A>bb<C> | ab<C> | b<C>}\\
+    \texttt{<C> $\xrightarrow[]{}$ ab<C> | $\varepsilon$}\\
+    \texttt{<B> $\xrightarrow[]{}$ ba<D> | a<D> }\\
+    \texttt{<D> $\xrightarrow[]{}$ ba<D> | a<A>b<D> | $\varepsilon$ }\\
+    
+\end{solution}
+
+\newpage
+
+\begin{problem}{109}
+    Za zadanu $Q$-gramatiku konstruirajte potisni automat. Tijekom parsiranja ulaznog niza na vrhu stoga redom se pojavljuju sljedeći znakovi: \texttt{<S>}, \texttt{<A>}, \texttt{<B>}, \texttt{<B>}, $\nabla$. Koji su se ulazni znakovi sigurno nalazili u parsiranom nizu?
+
+    \texttt{<S> $\xrightarrow[]{}$ a<A><B> | b<A><B>}\\
+    \indent \texttt{<A> $\xrightarrow[]{}$ a<A> | b<A> | c | $\varepsilon$}\\
+    \indent \texttt{<B> $\xrightarrow[]{}$ d | e<B> | f<A> | $\varepsilon$}
+\end{problem}
+
+\begin{solution}
+    \begin{tabular}{|c|c|c|c|c|c|c|c|}
+        \hline
+                         & \texttt{a} & \texttt{b} & \texttt{c} & \texttt{d} & \texttt{e} & \texttt{f} & $\bot$\\
+        \hline
+            \texttt{<S>} & (1) & (1) & \textit{Odbaci} & \textit{Odbaci} & \textit{Odbaci} & \textit{Odbaci} & \textit{Odbaci} \\
+        \hline
+            \texttt{<A>} & (2) & (2) & (3) & (5) & (5) & (5) & (5) \\
+        \hline
+            \texttt{<B>} & \textit{Odbaci} & \textit{Odbaci} & \textit{Odbaci} & (3) & (4) & (2) &  (5)\\
+        \hline
+            $\nabla$ & \textit{Odbaci} & \textit{Odbaci} & \textit{Odbaci} & \textit{Odbaci} & \textit{Odbaci} & \textit{Odbaci} &  \textit{Prihvati}\\
+        \hline
+        \end{tabular}\\
+
+        (1) \textit{Zamijeni}(\texttt{<B><A>}); \textit{Pomakni};\\
+        \indent (2) \textit{Zamijeni}(\texttt{<A>}); \textit{Pomakni};\\
+        \indent (3) \textit{Izvuci}; \textit{Pomakni};\\
+        \indent (4) \textit{Zamijeni}(\texttt{<B>}); \textit{Pomakni}; \\
+        \indent (5) \textit{Izvuci}; \textit{Zadrži}; 
+
+        \noindent Ako imamo produkciju $A \xrightarrow[]{} \varepsilon$, onda se u redak tablice $A$ i sve stupce određene znakovima skupa $\mathrm{PRIMIJENI}(A \xrightarrow[]{} \varepsilon) = \mathrm{SLIJEDI}(A)$ zapisuju akcije \textit{Izvuci}; \textit{Zadrži};\\
+
+        \begin{tabular}{|c|c|c|}
+            \hline
+             čitamo & akcija PA & stog \\
+            \hline
+             - & - & $\nabla$\texttt{<S>}\\
+            \hline
+             \texttt{a} ili \texttt{b} & 1 & $\nabla$\texttt{<B><A>}\\
+            \hline
+             \texttt{c} & 3 & $\nabla$\texttt{<B>}\\
+            \hline
+             \texttt{e} & 4 & $\nabla$\texttt{<B>}\\
+            \hline
+             \texttt{d} & 3 & $\nabla$\\
+            \hline
+        \end{tabular}
+       
+\end{solution}
+
+\newpage
+
+\begin{problem}{110}
+    Napišite gramatiku na temelju koje je konstruiran navedeni potisni automat te odredite o kojoj se gramatici radi.
+
+    \vspace{0.3cm}
+    
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+                         & \texttt{a} & \texttt{b} &  $\bot$\\
+        \hline
+            \texttt{S} & 1 & 2 & 8 \\
+        \hline
+            \texttt{A} & 3 & 4 & 8 \\
+        \hline
+            \texttt{B} & 5 & 6 & 8 \\
+        \hline
+            \texttt{a} & 7 & 8 & 8 \\
+        \hline
+            \texttt{b} & 8 & 7 & 8 \\
+        \hline
+            $\nabla$ & 8 & 8 & 9 \\
+        \hline
+        \end{tabular}\\
+
+        1: \textit{Pomakni}; \textit{Zamijeni}(\texttt{aBbA}); \\
+        \indent 2: \textit{Pomakni}; \textit{Zamijeni}(\texttt{bAaB}); \\
+        \indent 3: \textit{Pomakni}; \textit{Zamijeni}(\texttt{bA}); \\
+        \indent 4: \textit{Zadrži}; \textit{Zamijeni}(\texttt{B}); \\
+        \indent 5: \textit{Zadrži}; \textit{Izvuci};\\
+        \indent 6: \textit{Pomakni}; \textit{Zamijeni}(\texttt{aB});\\
+        \indent 7:  \textit{Pomakni}; \textit{Izvuci};\\
+        \indent 8: \textit{Odbaci}; \\
+        \indent 9: \textit{Prihvati};
+\end{problem}
+
+\begin{solution}
+    \noindent \texttt{S $\xrightarrow[]{}$ aAbBa | bBaAb}\\
+    \texttt{A $\xrightarrow[]{}$ aAb | B } (zaključak da je $b$ u skupu $\mathrm{PRIMIJENI}(A \xrightarrow[]{} B) = \mathrm{ZAPOCINJE(B)}$)\\
+    \texttt{B $\xrightarrow[]{}$ bBa | $\varepsilon$ } (zaključak da je $a$ u skupu $\mathrm{PRIMIJENI}(B \xrightarrow[]{} \varepsilon)$)\\
+\end{solution}
+
+\newpage
+
+\begin{problem}{111}
+    Za zadanu gramatiku konstruirajte konačni potisni automat i izrazite ga pomoću tablice. Prikažite rad potisnog automata na nizu \texttt{ebabc}. 
+    
+    \texttt{<S> $\xrightarrow[]{}$ <A><B> | d<C>}\\
+    \indent \texttt{<A> $\xrightarrow[]{}$ a<C><B> | $\varepsilon$}\\
+    \indent \texttt{<B> $\xrightarrow[]{}$ b<C> | e<S>} \\
+    \indent \texttt{<C> $\xrightarrow[]{}$ a<B> | c}
+\end{problem}
+
+\begin{solution}
+    \begin{tabular}{|c|c|c|c|c|c|c|}
+        \hline
+                         & \texttt{a} & \texttt{b} & \texttt{c} & \texttt{d} & \texttt{e} & $\bot$\\
+        \hline
+            \texttt{<S>} & (1) & (1) & \textit{Odbaci} & (2) & (1) & \textit{Odbaci}\\
+        \hline
+            \texttt{<A>} & (3) & (4) & \textit{Odbaci} & \textit{Odbaci} & (4) & \textit{Odbaci}\\
+        \hline
+            \texttt{<B>} & \textit{Odbaci} & (2) & \textit{Odbaci} & \textit{Odbaci} & (5) & \textit{Odbaci}\\
+        \hline
+            \texttt{<C>} & (6) & \textit{Odbaci} & (7) & \textit{Odbaci} & \textit{Odbaci} &  \textit{Odbaci}\\
+        \hline
+            $\nabla$ & \textit{Odbaci} & \textit{Odbaci} & \textit{Odbaci} & \textit{Odbaci} & \textit{Odbaci} & \textit{Prihvati}\\
+        \hline
+        \end{tabular}\\
+
+        (1) \textit{Zamijeni}(\texttt{<B><A>}); \textit{Zadrži};\\
+        \indent (2) \textit{Zamijeni}(\texttt{<C>}); \textit{Pomakni};\\
+        \indent (3) \textit{Zamijeni}(\texttt{<C><B>}); \textit{Pomakni};\\
+        \indent (4) \textit{Izvuci}; \textit{Zadrži};\\
+        \indent (5) \textit{Zamijeni}(\texttt{<S>}); \textit{Pomakni};\\
+        \indent (6) \textit{Zamijeni}(\texttt{<B>}); \textit{Pomakni};\\
+        \indent (7) \textit{Izvuci}; \textit{Pomakni};\\
+
+        primjena na ulazni niz \texttt{ebabc$\bot$}:
+
+        \vspace{0.3cm}
+
+        \begin{tabular}{|c|c|c|}
+            \hline
+             čitamo & akcija PA & stog \\
+            \hline
+             - & - & $\nabla$\texttt{S}\\
+            \hline
+             \texttt{e} & 1 & $\nabla$\texttt{BA}\\
+            \hline
+             \texttt{b} & 4 & $\nabla$\texttt{B}\\
+            \hline
+             \texttt{b} & 2 & $\nabla$\texttt{C}\\
+            \hline
+             \texttt{a} & 6 & $\nabla$\texttt{B}\\
+            \hline
+             \texttt{b} & 2 & $\nabla$\texttt{C}\\
+            \hline
+             \texttt{c} & 7 & $\nabla$\\
+            \hline
+             $\bot$ & \textit{Prihvati} & \\
+            \hline
+        \end{tabular}
+\end{solution}
+
+\newpage
+
+\begin{problem}{112}
+    Iz navedenog potisnog automata rekonstruirajte gramatiku.
+    
+    \vspace{0.3cm}
+    
+    \begin{tabular}{|c|c|c|c|c|c|c|}
+        \hline
+                         & \texttt{a} & \texttt{b} & \texttt{c} & \texttt{d} & \texttt{e} & $\bot$\\
+        \hline
+            \texttt{<S>} & 1 & 9 & 9 & 1 & 1 & 9\\
+        \hline
+            \texttt{<A>} & 6 & 9 & 9 & 9 & 7 & 9\\
+        \hline
+            \texttt{<B>} & 2 & 9 & 9 & 3 & 2 & 9\\
+        \hline
+            \texttt{<C>} & 4 & 5 & 9 & 9 & 9 & 9 \\
+        \hline
+            $\nabla$ & 9 & 9 & 9 & 9 & 9 & 8\\
+        \hline
+        \end{tabular}\\
+
+        1: \textit{Zadrži}; \textit{Zamijeni}(\texttt{d<A>b<B>}); \\
+        \indent 2: \textit{Zadrži}; \textit{Zamijeni}(\texttt{d<A>}); \\
+        \indent 3: \textit{Pomakni}; \textit{Zamijeni}(\texttt{<C>c<S>}); \\
+        \indent 4: \textit{Pomakni}; \textit{Zamijeni}(\texttt{<C>}); \\
+        \indent 5: \textit{Zadrži}; \textit{Izvuci};\\
+        \indent 6: \textit{Pomakni}; \textit{Zamijeni}(\texttt{<A>});\\
+        \indent 7:  \textit{Pomakni}; \textit{Izvuci};\\
+        \indent 8: \textit{Prihvati}; \\
+        \indent 9: \textit{Odbaci};
+\end{problem}
+
+\begin{solution}
+    \noindent \texttt{<S> $\xrightarrow[]{}$ <B>b<A>d} (zaključak da su $a$, $d$ i $e$ u skupu $\mathrm{PRIMIJENI}(S \xrightarrow[]{} BbAd) = \mathrm{ZAPOCINJE(B)}$)\\ 
+    \texttt{<A> $\xrightarrow[]{}$ a<A> | e}\\
+    \texttt{<B> $\xrightarrow[]{}$ <A>d | d<S>c<C>} (zaključak da su $a$ i $e$ u skupu $\mathrm{PRIMIJENI}(B \xrightarrow[]{} Ad) = \mathrm{ZAPOCINJE(A)}$)\\
+    \texttt{<C> $\xrightarrow[]{}$ a<C> | $\varepsilon$} (zaključak da je $b$ u skupu $\mathrm{PRIMIJENI}(C \xrightarrow[]{} \varepsilon) = \mathrm{SLIJEDI(C)}$, dokaz je u prvoj produkciji)
+\end{solution}
+
+\newpage
+\begin{problem}{113}
+     Za zadanu gramatiku konstruirajte konačni potisni automat i izrazite ga pomoću tablice. Prikažite rad potisnog automata na nizu \texttt{cdabed}. 
+
+        \texttt{<S> $\xrightarrow[]{}$ a<A>bc<B> | c<A>}\\
+        \indent \texttt{<A> $\xrightarrow[]{}$ a<A> | b | d<A>e<C>}\\
+        \indent \texttt{<B> $\xrightarrow[]{}$ b<B> | e<C>}\\
+        \indent \texttt{<C> $\xrightarrow[]{}$ c | d | e}
+\end{problem}
+
+\begin{solution}
+        \begin{tabular}{|c|c|c|c|c|c|c|}
+        \hline
+                         & \texttt{a} & \texttt{b} & \texttt{c} & \texttt{d} & \texttt{e} & $\bot$\\
+        \hline
+            \texttt{<S>} & (1) & \textit{Odbaci} & (2) & \textit{Odbaci} & \textit{Odbaci} & \textit{Odbaci}\\
+        \hline
+            \texttt{<A>} & (2) & (3) & \textit{Odbaci} & (4) & \textit{Odbaci} & \textit{Odbaci}\\
+        \hline
+            \texttt{<B>} & \textit{Odbaci} & (5) & \textit{Odbaci} & \textit{Odbaci} & (6) & \textit{Odbaci}\\
+        \hline
+            \texttt{<C>} & \textit{Odbaci} & \textit{Odbaci} & (3) & (3) & (3) & \textit{Odbaci}\\
+        \hline
+            \texttt{b} & \textit{Odbaci} & (3) & \textit{Odbaci} & \textit{Odbaci} & \textit{Odbaci} & \textit{Odbaci}\\
+        \hline
+            \texttt{c} & \textit{Odbaci} & \textit{Odbaci} & (3) & \textit{Odbaci} & \textit{Odbaci} & \textit{Odbaci}\\
+        \hline
+            \texttt{e} & \textit{Odbaci} & \textit{Odbaci} & \textit{Odbaci} & \textit{Odbaci} & (3) & \textit{Odbaci}\\
+        \hline
+            $\nabla$ & \textit{Odbaci} & \textit{Odbaci} & \textit{Odbaci} & \textit{Odbaci} & \textit{Odbaci} & \textit{Prihvati}\\
+        \hline
+        \end{tabular}\\
+
+        (1) \textit{Zamijeni}(\texttt{<B>cb<A>}); \textit{Pomakni};\\
+        \indent (2) \textit{Zamijeni}(\texttt{<A>}); \textit{Pomakni};\\
+        \indent (3) \textit{Izvuci}; \textit{Pomakni};\\
+        \indent (4) \textit{Zamijeni}(\texttt{<C>e<A>}); \textit{Pomakni}; \\
+        \indent (5) \textit{Zamijeni}(\texttt{<B>}); \textit{Pomakni};\\
+        \indent (6) \textit{Zamijeni}(\texttt{<C>}); \textit{Pomakni};
+
+        primjena na ulazni niz \texttt{cdabed$\bot$}:
+
+        \vspace{0.3cm}
+
+        \begin{tabular}{|c|c|c|}
+            \hline
+             čitamo & akcija PA & stog \\
+            \hline
+             - & - & $\nabla$\texttt{S}\\
+            \hline
+             \texttt{c} & 2 & $\nabla$\texttt{A}\\
+            \hline
+             \texttt{d} & 4 & $\nabla$\texttt{CeA}\\
+            \hline
+             \texttt{a} & 2 & $\nabla$\texttt{CeA}\\
+            \hline
+             \texttt{b} & 3 & $\nabla$\texttt{Ce}\\
+            \hline
+             \texttt{e} & 3 & $\nabla$\texttt{C}\\
+            \hline
+             \texttt{d} & 3 & $\nabla$\\
+            \hline
+             \texttt{$\bot$} & \textit{Prihvati} & \\
+            \hline
+        \end{tabular}
+\end{solution}
+
+\newpage
+
+\begin{comment}
+\begin{problem}{114}
+    Zadanu COBOL notaciju prevedite u BNF notaciju.
+
+    \vspace{0.5cm}
+    
+    \begin{tabular}{c c c c}
+    \(\left\{
+        \begin{array}{c}
+            \underline{A} \\
+            \underline{B} \\
+            \underline{C}D \\
+            \underline{C}E
+        \end{array}
+    \right\}\)
+
+    & 
+
+    \(\left \{
+        \begin{array}{c}
+            0 \\
+            1 \\
+            2 
+        \end{array}
+    \right\}\)
+
+    & 
+    \(\ldots\)
+
+    &
+
+    \(\left \{
+        \begin{array}{c}
+            \underline{A} \\
+            \underline{B} \\
+            \underline{D}C \\
+            \underline{E}C
+        \end{array}
+    \right\}\)
+
+    \end{tabular}
+\end{problem}
+\end{comment}
+
+\begin{problem}{127}
+    Zadana je Co-No tablica. Odredite rezultat izvodenja zadanog programa.
+    
+    \noindent\texttt{,7$\xrightarrow[]{}$x,12$\xrightarrow[]{}$y,x*y$\xrightarrow[]{}$x,3$\xrightarrow[]{}$z,x/z$\xrightarrow[]{}$y,x-y/2$\xrightarrow[]{}$x,x*2/y+z$\xrightarrow[]{}$x,x*6-y+z*2-9*x$\xrightarrow[]{}$y,x+y/2$\xrightarrow[]{}$z,} \\
+    
+        \begin{tabular}{|c|c|c|c|c|c|c|}
+            \hline
+             & $,$ & $\xrightarrow[]{}$ & $*$ & $/$ & $+$ & $-$\\
+            \hline
+            $,$ & greška & dohvati & dohvati & dohvati & dohvati & dohvati \\
+            \hline
+             $\xrightarrow[]{}$ & spremi & greška & greška & greška & greška & greška\\
+            \hline
+             $*$& greška & pomnoži & pomnoži & pomnoži & pomnoži & pomnoži\\
+            \hline
+             $/$& greška & podijeli & podijeli & podijeli & podijeli & podijeli\\
+            \hline
+             $+$& greška & zbroji & zbroji & zbroji & zbroji & zbroji\\
+            \hline
+            $-$ & greška & oduzmi & oduzmi & oduzmi & oduzmi & oduzmi\\
+            \hline
+        \end{tabular}
+\end{problem}
+
+\begin{solution}
+    \begin{multicols}{4}
+        \begin{tabular}{|c|c|}
+            \hline
+            dohvati & 7 \\
+            \hline 
+            spremi & $x = 7$ \\
+            \hline
+            dohvati & 12 \\
+            \hline 
+            spremi & $y = 12$ \\
+            \hline
+            dohvati & $x$ \\
+            \hline
+            pomnoži &  $7 \cdot 12$\\
+            \hline
+            spremi & $x = 84$ \\
+            \hline
+            dohvati & 3 \\
+            \hline
+            spremi & $z = 3$\\
+            \hline
+            dohvati & $x$ \\
+            \hline
+            podijeli & $84:3$ \\
+            \hline
+            spremi & $y = 28$\\
+            \hline
+        \end{tabular}
+
+        \columnbreak
+        
+        \begin{tabular}{|c|c|}
+            \hline
+            dohvati & $x$ \\
+            \hline
+            oduzmi & $x - y$ \\
+            \hline
+            podijeli & $56 : 2$ \\
+            \hline
+            spremi & $x = 28$ \\
+            \hline
+            dohvati & $x$\\
+            \hline
+            pomnoži & $28 \cdot 2$ \\
+            \hline
+            podijeli & $56 : 28$ \\
+            \hline
+            zbroji & $2 + 3$\\
+            \hline
+            spremi & $x = 5$\\
+            \hline
+            dohvati & $x$\\
+            \hline
+            pomnoži & $5 \cdot 6$\\
+            \hline
+            oduzmi & $30 - 28$ \\
+            \hline
+        \end{tabular}
+
+        \columnbreak
+
+        \begin{tabular}{|c|c|}
+            \hline
+            zbroji & 2 + 3 \\
+            \hline
+            pomnoži & $5 \cdot 2$\\
+            \hline
+            oduzmi & $10 - 9$ \\
+            \hline
+            pomnoži & $1 \cdot 5$\\
+            \hline
+            spremi & $y = 5$\\
+            \hline
+            dohvati & $x$\\
+            \hline
+            zbroji & $5 + 5$\\
+            \hline
+            podijeli & $10 : 2$\\
+            \hline
+            spremi & $z = 5$\\
+            \hline
+        \end{tabular}
+   \end{multicols}
+\end{solution}
+\begin{comment}
+    
+\begin{problem}{133}
+    Izgradite tablicu relacija prednosti za zadanu operatorsku gramatiku. \\
+    \texttt{<S> $\xrightarrow[]{}$ <A>a<S> | <B>}\\
+    \texttt{<A> $\xrightarrow[]{}$ <B>c<D> | <D>d}\\
+    \texttt{<B> $\xrightarrow[]{}$ b}\\
+    \texttt{<D> $\xrightarrow[]{}$ c}
+\end{problem}
+
+\begin{solution}
+    \begin{tabular}{|c|c|c|c|c|c|}
+        \hline
+         & $a$ & $b$ & $c$ & $d$ & $\bot$ \\
+        \hline
+         $a$ & $\Leftarrow$ & $\Leftarrow$ & $\Leftarrow$ & $\Rightarrow$ & $\Rightarrow$\\
+        \hline
+         $b$ & $\Rightarrow$ & & $\Rightarrow$ & & $\Rightarrow$\\
+        \hline
+         $c$ & $\Rightarrow$ & $\Rightarrow$ & $\Leftarrow$ & $\Rightarrow$ & $\Rightarrow$\\
+        \hline
+         $d$ & $\Leftarrow$ & & $\Rightarrow$ & & $\Rightarrow$\\
+        \hline
+         $\nabla$ & $\Leftarrow$ & $\Leftarrow$ & $\Leftarrow$ & $\Leftarrow$ & \\
+        \hline
+    \end{tabular}
+\end{solution}
+\end{comment}
+
+\newpage
+
+\begin{problem}{134}
+    Na temelju zadane operatorske gramatike izgradite tablicu relacija prednosti. Prikažite parsiranje niza $(a \vee a \wedge \neg \,a) \wedge  \neg \,a \vee a$ pomoću izgrađene tablice. 
+    
+    \noindent \texttt{<E> $\xrightarrow[]{}$ <E> $\vee$ <T> | <T>}\\
+    \texttt{<T> $\xrightarrow[]{}$ <T> $\wedge$ <P> | <P>}\\
+    \texttt{<P> $\xrightarrow[]{}$ <N> | $\neg$<N>}\\
+    \texttt{<N> $\xrightarrow[]{}$ ( <E> )}\\
+    \texttt{<N> $\xrightarrow[]{}$ a}
+\end{problem}
+
+\begin{solution}
+        \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+        \hline
+             & $\vee$ & $\wedge$ & $\neg$ & $($ & $)$ & $a$ & $\bot$\\
+        \hline
+            $\vee$ & $\Rightarrow$ & $\Leftarrow$ & $\Leftarrow$ & $\Leftarrow$  & $\Rightarrow$ & $\Leftarrow$ & $\Rightarrow$\\
+        \hline
+            $\wedge$ & $\Rightarrow$ & $\Rightarrow$ & $\Leftarrow$ & $\Leftarrow$ & $\Rightarrow$ & $\Leftarrow$ & $\Rightarrow$\\
+        \hline
+            $\neg$ & $\Leftarrow$ & $\Leftarrow$ & $\Leftarrow$ & $\Leftarrow$ & $\Rightarrow$ &  $\Leftarrow$ & $\Rightarrow$\\
+        \hline
+            $($ & $\Leftarrow$ & $\Leftarrow$ & $\Leftarrow$ & $\Leftarrow$ & $\Leftarrow \! \! \! \! \! \Rightarrow$ & $\Leftarrow$ & \\
+        \hline
+            $)$ & $\Rightarrow$ & $\Rightarrow$ & $\Rightarrow$ &  & $\Rightarrow$ &   & $\Rightarrow$\\
+        \hline
+            $a$ & $\Rightarrow$ & $\Rightarrow$ & $\Leftarrow$ &  & $\Rightarrow$ &   & $\Rightarrow$\\
+        \hline
+            $\nabla$ & $\Leftarrow$ & $\Leftarrow$ & $\Leftarrow$ & $\Leftarrow$ &  &  $\Leftarrow$ & \\
+        \hline
+        \end{tabular}
+
+        \vspace{0.3cm}
+
+        \begin{tabular}{|>{\raggedright}m{5cm}|c|>{\raggedleft}m{4.5cm}|c|}
+            \hline
+            \centering stog & odluka & \centering ulazni niz & akcija \\
+            \hline
+            $\nabla$ & $\Leftarrow$ & $(a \vee a \wedge \neg \,a) \wedge  \neg \,a \vee a \, \bot$ & \textit{Pomakni}()\\
+            \hline
+            $\nabla \Leftarrow ($ & $\Leftarrow$ & $a \vee a \wedge \neg \,a) \wedge  \neg \,a \vee a \, \bot$ & \textit{Pomakni}()\\
+            \hline
+            $\nabla \Leftarrow ( \Leftarrow a$ & $\Rightarrow$ & $\vee a \wedge \neg \,a) \wedge  \neg \,a \vee a \, \bot$ & \textit{Reduciraj}()\\
+            \hline
+            $\nabla \Leftarrow ( $ & $\Leftarrow$ & $\vee a \wedge \neg \,a) \wedge  \neg \,a \vee a \, \bot$ & \textit{Pomakni}()\\
+            \hline
+            $\nabla \Leftarrow ( \Leftarrow \vee$ & $\Leftarrow$ & $ a \wedge \neg \,a) \wedge  \neg \,a \vee a \, \bot$ & \textit{Pomakni}()\\
+            \hline
+            $\nabla \Leftarrow ( \Leftarrow \vee \Leftarrow a$ & $\Rightarrow$ & $  \wedge \neg \,a) \wedge  \neg \,a \vee a \, \bot$ & \textit{Reduciraj}()\\
+            \hline
+            $\nabla \Leftarrow ( \Leftarrow \vee $ & $\Leftarrow$ & $  \wedge \neg \,a) \wedge  \neg \,a \vee a \, \bot$ & \textit{Pomakni}()\\
+            \hline
+            $\nabla \Leftarrow ( \Leftarrow \vee \Leftarrow \wedge $ & $\Leftarrow$ & $  \neg \,a) \wedge  \neg \,a \vee a \, \bot$ & \textit{Pomakni}()\\
+            \hline
+            $\nabla \Leftarrow ( \Leftarrow \vee \Leftarrow \wedge \Leftarrow \neg $ & $\Leftarrow$ & $ \,a) \wedge  \neg \,a \vee a \, \bot$ & \textit{Pomakni}()\\
+            \hline
+            $\nabla \Leftarrow ( \Leftarrow \vee \Leftarrow \wedge \Leftarrow \neg \Leftarrow a$ & $\Rightarrow$ & $ ) \wedge  \neg \,a \vee a \, \bot$ & \textit{Reduciraj}()\\
+            \hline
+            $\nabla \Leftarrow ( $ & $\Leftarrow \! \! \! \! \! \Rightarrow$ & $ ) \wedge  \neg \,a \vee a \, \bot$ & \textit{Pomakni}()\\
+            \hline
+            $\nabla \Leftarrow ( \Leftarrow \! \! \! \! \! \Rightarrow )$ & $\Rightarrow$ & $ \wedge  \neg \,a \vee a \, \bot$ & \textit{Reduciraj}()\\
+            \hline
+            $\nabla $ & $\Leftarrow$ & $ \wedge  \neg \,a \vee a \, \bot$ & \textit{Pomakni}()\\
+            \hline
+            $\nabla \Leftarrow \wedge$ & $\Leftarrow$ & $ \neg \,a \vee a \, \bot$ & \textit{Pomakni}()\\
+            \hline
+            $\nabla  \Leftarrow \wedge \Leftarrow \neg $ & $\Leftarrow$ & $ \,a \vee a \, \bot$ & \textit{Pomakni}()\\
+            \hline
+            $\nabla  \Leftarrow \wedge \Leftarrow \neg \Leftarrow a$ & $\Rightarrow$ & $ \vee \, a \, \bot$ & \textit{Reduciraj}()\\
+            \hline
+  %%potencijalna greška
+            $\nabla  \Leftarrow \wedge \Leftarrow \neg $ & $\Leftarrow$ & $ \vee \, a \, \bot$ & \textit{Pomakni}()\\
+            \hline
+            $\nabla \Leftarrow \wedge \Leftarrow \neg \Leftarrow \vee$ & $\Leftarrow$ & $  \, a \, \bot$ & \textit{Pomakni}()\\
+            \hline
+            $\nabla \Leftarrow \wedge \Leftarrow \neg \Leftarrow \vee \Leftarrow a$ & $\Rightarrow$ & $  \, \bot$ & \textit{Reduciraj}()\\
+            \hline
+             $\nabla $ & $\Rightarrow$ & $  \, \bot$ & \textit{Prihvati}()\\
+            \hline
+        \end{tabular}
+
+
+\end{solution}
+
+
+\begin{problem}{136}
+    Odredite PRIMIJENI skupove svih produkcija u zadanoj gramatici. Odredite je li gramatika $LL(1)$ i obrazložite. \\
+    \texttt{<S> $\xrightarrow[]{}$ a<S>b<S> | c<D><A> | $\varepsilon$}\\
+    \texttt{<A> $\xrightarrow[]{}$ <B>c | ba<B>}\\
+    \texttt{<B> $\xrightarrow[]{}$ a<D> | de<C> | e<C>}\\
+    \texttt{<C> $\xrightarrow[]{}$ <D>f | a<B>c}\\
+    \texttt{<D> $\xrightarrow[]{}$ e<D> | $\varepsilon$}
+\end{problem}
+
+\begin{solution}
+    \noindent PRIMIJENI(\texttt{<S> $\xrightarrow[]{}$ a<S>b<S>}) = ZAPOČINJE(\texttt{a<S>b<S>}) = \{\texttt{a}\}\\
+    PRIMIJENI(\texttt{<S> $\xrightarrow[]{}$ c<D><A>}) = ZAPOČINJE(\texttt{c<D><A>}) = \{\texttt{c}\}\\
+    PRIMIJENI(\texttt{<S> $\xrightarrow[]{} \; \varepsilon$}) = ZAPOČINJE($\varepsilon$) $\cup$ SLIJEDI(\texttt{<S>}) = \{\texttt{b, $\bot$}\}\\
+    PRIMIJENI(\texttt{<A> $\xrightarrow[]{}$ <B>c}) = ZAPOČINJE(\texttt{<B>c}) = \{\texttt{a, d, e}\}\\
+    PRIMIJENI(\texttt{<A> $\xrightarrow[]{}$ ba<B>}) = ZAPOČINJE(\texttt{ba<B>}) = \{\texttt{b}\}\\
+    PRIMIJENI(\texttt{<B> $\xrightarrow[]{}$ a<D>}) = ZAPOČINJE(\texttt{a<D>}) = \{\texttt{a}\}\\
+    PRIMIJENI(\texttt{<B> $\xrightarrow[]{}$ de<C>}) = ZAPOČINJE(\texttt{de<C>}) = \{\texttt{d}\}\\
+    PRIMIJENI(\texttt{<B> $\xrightarrow[]{}$ e<C>}) = ZAPOČINJE(\texttt{e<C>}) = \{\texttt{e}\}\\
+    PRIMIJENI(\texttt{<C> $\xrightarrow[]{}$ <D>f}) = ZAPOČINJE(\texttt{<D>f}) = \{\texttt{a, b, d, e, f, $\bot$}\}\\
+    PRIMIJENI(\texttt{<C> $\xrightarrow[]{}$ a<B>c}) = ZAPOČINJE(\texttt{a<B>c}) = \{\texttt{a}\}\\
+    PRIMIJENI(\texttt{<D> $\xrightarrow[]{}$ e<D>}) = ZAPOČINJE(\texttt{e<D>}) = \{\texttt{e}\}\\
+    PRIMIJENI(\texttt{<D> $\xrightarrow[]{} \; \varepsilon$}) =ZAPOČINJE($\varepsilon$) $\cup$ SLIJEDI(\texttt{<D>}) = \{\texttt{a, b, d, e, f, $\bot$}\}\\
+    Gramatika nije $LL(1)$ jer postoje produkcije koje imaju istu lijevu stranu i njihovi PRIMIJENI skupovi imaju zajedničkih elemenata.
+\end{solution}
+
+\newpage
+
+\begin{problem}{152}
+     Za zadanu gramatiku izgradite parser zasnovan na tehnici parsiranja \textit{Pomakni-Pronađi}. \\
+     (1) \texttt{<S> $\xrightarrow[]{}$ b<A> } \\
+     (2) \texttt{<S> $\xrightarrow[]{}$ p<A>m<C>}\\
+     (3) \texttt{<A> $\xrightarrow[]{}$ d<S>a }\\
+     (4) \texttt{<A> $\xrightarrow[]{}$  e}\\
+     (5) \texttt{<C> $\xrightarrow[]{}$ d<A>}
+\end{problem}
+
+\begin{solution}
+    \begin{tabular}{|c|c|c|c|c|c|c|c|}
+    \hline
+         & \texttt{a} & \texttt{b} & \texttt{d} & \texttt{e} & \texttt{p} & \texttt{m} & $\bot$ \\
+    \hline
+        \texttt{<S>} & \textit{Pomakni}() & \textit{Odbaci}() & \textit{Odbaci}() & \textit{Odbaci}() & \textit{Odbaci}() & \textit{Odbaci}() & \textit{Pronađi}1()\\
+    \hline
+        \texttt{<A>} & \textit{Pronađi}2() & \textit{Odbaci}() & \textit{Odbaci}() & \textit{Odbaci}() & \textit{Odbaci}() & \textit{Pomakni}() & \textit{Pronađi}2()\\
+    \hline
+        \texttt{<C>} & \textit{Pronađi}3() & \textit{Odbaci}() & \textit{Odbaci}() & \textit{Odbaci}() & \textit{Odbaci}() & \textit{Odbaci}() & \textit{Pronađi}3()\\
+    \hline
+       \texttt{a} & \textit{Pronađi}4() & \textit{Odbaci}() & \textit{Odbaci}() & \textit{Odbaci}() & \textit{Odbaci}() & \textit{Pronađi}4() & \textit{Pronađi}4()\\
+    \hline
+         \texttt{b} & \textit{Odbaci}() & \textit{Odbaci}() & \textit{Pomakni}() & \textit{Pomakni}() & \textit{Odbaci}() & \textit{Odbaci}() & \textit{Odbaci}()\\
+    \hline
+         \texttt{d} & \textit{Odbaci}() & \textit{Pomakni}() & \textit{Pomakni}() & \textit{Pomakni}() & \textit{Pomakni}() & \textit{Odbaci}() & \textit{Odbaci}()\\
+    \hline
+         \texttt{e} & \textit{Pronađi}5() & \textit{Odbaci}() & \textit{Odbaci}() & \textit{Odbaci}() & \textit{Odbaci}() & \textit{Pronađi}5() & \textit{Pronađi}5()\\
+    \hline
+         \texttt{p} & \textit{Odbaci}() & \textit{Odbaci}() & \textit{Pomakni}() & \textit{Pomakni}() & \textit{Odbaci}() & \textit{Odbaci}() & \textit{Odbaci}()\\
+    \hline
+         \texttt{m} & \textit{Odbaci}() & \textit{Odbaci}() & \textit{Pomakni}() & \textit{Odbaci}() & \textit{Odbaci}() & \textit{Odbaci}() & \textit{Odbaci}()\\
+    \hline
+         $\nabla$ & \textit{Odbaci}() & \textit{Pomakni}() & \textit{Odbaci}() & \textit{Odbaci}() & \textit{Pomakni}() & \textit{Odbaci}() & \textit{Odbaci}()\\
+    \hline
+    \end{tabular}\\
+
+    \begin{multicols}{2}
+    \noindent SLIJEDI(\texttt{<S>}) = \{\texttt{a, $\bot$}\}\\
+    SLIJEDI(\texttt{<A>}) = \{\texttt{a, m, $\bot$}\}\\
+    SLIJEDI(\texttt{<C>}) = \{\texttt{a, $\bot$}\}\\
+    SLIJEDI(\texttt{a}) = \{\texttt{m, $\bot$}\}\\
+    SLIJEDI(\texttt{b}) = \{\texttt{d, e}\}
+
+        \columnbreak
+        
+    \noindent SLIJEDI(\texttt{d}) = \{\texttt{b, d, e, p}\}\\
+    SLIJEDI(\texttt{e}) = \{\texttt{a, m, $\bot$}\}\\
+    SLIJEDI(\texttt{p}) = \{\texttt{d, e}\}\\
+    SLIJEDI(\texttt{m}) = \{\texttt{d}\}
+    \end{multicols}
+
+    \noindent \uwave{imamo relacije}: \textit{ReduciranZnakom}($A, a$), \textit{ReduciranZnakom}($A, \bot$), \textit{ReduciranZnakom}($C, a$), \\ \textit{ReduciranZnakom}($C, \bot$), \textit{ReduciranZnakom}($a, a$), \textit{ReduciranZnakom}($a, m$),    \textit{ReduciranZnakom}($a, \bot$),  \\ \textit{ReduciranZnakom}($e, a$),    \textit{ReduciranZnakom}($e,m$), \textit{ReduciranZnakom}($e, \bot$)  
+    
+    \noindent ne definiramo relacije \textit{ReduciranZnakom} za znakove koji nisu na krajnje desnom mjestu desnih strana produkcija\\
+
+    \noindent \uwave{imamo relacije}: \textit{IspodZnaka}($S, a$), \textit{IspodZnaka}($A, m$), \textit{IspodZnaka}($b, d$), \textit{IspodZnaka}($b, e$), \\ \textit{IspodZnaka}($d, b$), \textit{IspodZnaka}($d, d$), \textit{IspodZnaka}($d, e$), \textit{IspodZnaka}($d, p$), \textit{IspodZnaka}($p, d$), \textit{IspodZnaka}($p, e$), \textit{IspodZnaka}($m, d$), \textit{IspodZnaka}($\nabla, b$), \textit{IspodZnaka}($\nabla, p$)
+
+    \noindent ne definiramo relacije \textit{IspodZnaka} za znakove koji se nalaze isključivo na krajnje desnim mjestima desnih strana produkcija
+
+    \newpage
+    \begin{multicols}{2}
+    \begin{lstlisting}
+    Pronadi1(){
+        ako Stog == nabla<S>
+            Prihvati();
+        inace
+            Odbaci();
+    }
+    \end{lstlisting}
+    \begin{lstlisting}
+    Pronadi2(){
+        ako VrhStoga == b<A>
+            Reduciraj1();
+        inace ako VrhStoga == d<A>
+            Reduciraj5();
+        inace
+            Odbaci();
+    }
+    \end{lstlisting}
+
+    \begin{lstlisting}
+    Pronadi3(){
+        ako VrhStoga == p<A>m<C>
+            Reduciraj2();
+        inace
+            Odbaci();
+    }
+    \end{lstlisting}
+
+    \columnbreak
+
+    \begin{lstlisting}
+    Pronadi4(){
+        ako VrhStoga == d<S>a
+            Reduciraj3();
+        inace
+            Odbaci();
+    }
+    \end{lstlisting}
+
+    \begin{lstlisting}
+    Pronadi5(){
+        Reduciraj4();
+    }
+    \end{lstlisting}
+
+    \begin{lstlisting}
+    Pomakni(){
+        StaviNaStog(Procitani znak);
+        Pomakni Kazalju Na Sljedeci Znak;
+    }
+    \end{lstlisting}
+    \end{multicols}
+\end{solution}
+
+\newpage
+
+\begin{problem}{156}
+    Za zadanu gramatiku konstruirajte parser zasnovan na tehnici \textit{Pomakni-Pronađi}. Proturječja \textit{Pomakni/Pronađi} razriješite u korist akcije \textit{Pomakni}.\\
+     (1) \texttt{<S> $\xrightarrow[]{}$ aba<S>q<W>} \\
+     (2) \texttt{<S> $\xrightarrow[]{}$ baf<Y>}\\
+     (3) \texttt{<W> $\xrightarrow[]{}$ cc<S> }\\
+     (4) \texttt{<W> $\xrightarrow[]{}$  q}\\
+     (5) \texttt{<Y> $\xrightarrow[]{}$ caba<W>}\\
+     (6) \texttt{<Y> $\xrightarrow[]{}$ ffa<S>q<W>}
+\end{problem}
+
+\begin{solution}
+    \begin{tabular}{|c|c|c|c|c|c|c|}
+    \hline
+         & \texttt{a} & \texttt{b} & \texttt{c} & \texttt{f} & \texttt{q} & $\bot$ \\
+    \hline
+        \texttt{<S>} & \textit{Pomakni}() & \textit{Odbaci}() & \textit{Odbaci}() & \textit{Odbaci}() & \textit{Pomakni}() & \textit{Pronađi}() \\
+    \hline
+        \texttt{<W>} & \textit{Odbaci}() & \textit{Odbaci}() & \textit{Odbaci}() & \textit{Odbaci}() & \textit{Pronađi}() & \textit{Pronađi}() \\
+    \hline
+        \texttt{<Y>} & \textit{Odbaci}() & \textit{Odbaci}() & \textit{Odbaci}() & \textit{Odbaci}() & \textit{Pronađi}() & \textit{Pronađi}() \\
+    \hline
+       \texttt{a} & \textit{Pomakni}() & \textit{Pomakni}() & \textit{Pomakni}() & \textit{Pomakni}() & \textit{Pomakni}() & \textit{Odbaci}() \\
+    \hline
+         \texttt{b} & \textit{Pomakni}() & \textit{Odbaci}() & \textit{Odbaci}() & \textit{Odbaci}() & \textit{Odbaci}() & \textit{Odbaci}() \\
+    \hline
+         \texttt{c} & \textit{Pomakni}() & \textit{Pomakni}() & \textit{Odbaci}() & \textit{Odbaci}() & \textit{Odbaci}() & \textit{Odbaci}() \\
+    \hline
+         \texttt{f} & \textit{Pomakni}() & \textit{Odbaci}() & \textit{Pomakni}() & \textit{Pomakni}() & \textit{Odbaci}() & \textit{Odbaci}() \\
+    \hline
+         \texttt{q} & \textit{Odbaci}() & \textit{Odbaci}() & \textit{Pomakni}() & \textit{Odbaci}() & \textit{Pronađi}() & \textit{Pronađi}() \\
+    \hline
+         $\nabla$ & \textit{Pomakni}() & \textit{Pomakni}() & \textit{Odbaci}() & \textit{Odbaci}() & \textit{Odbaci}() & \textit{Odbaci}() \\
+    \hline
+    \end{tabular}\\
+
+
+    \noindent SLIJEDI(\texttt{<S>}) = \{\texttt{q, $\bot$}\}\\
+    SLIJEDI(\texttt{<W>}) = \{\texttt{q, $\bot$}\}\\
+    SLIJEDI(\texttt{<Y>}) = \{\texttt{q, $\bot$}\}\\
+
+    \noindent \uwave{imamo relacije}: (pretvaramo ih u akcije \textit{Pronađi})\\
+    \textit{ReduciranZnakom}($S,\bot$), \textit{ReduciranZnakom}($S, q$), \textit{ReduciranZnakom}($W, q$), \textit{ReduciranZnakom}($W, \bot$), \\
+    \textit{ReduciranZnakom}($Y, q$), \textit{ReduciranZnakom}($Y, \bot$), \textit{ReduciranZnakom}($q, q$), \textit{ReduciranZnakom}($q, \bot$)\\
+
+    \noindent \uwave{imamo relacije}: (pretvaramo ih u akcije \textit{Pomakni})\\
+    \textit{IspodZnaka}($\nabla, a$), \textit{IspodZnaka}($\nabla, b$), \textit{IspodZnaka}($S, q$), \textit{IspodZnaka}($a, a$), \textit{IspodZnaka}($a, b$), \textit{IspodZnaka}($a, c$), \textit{IspodZnaka}($a, f$), \textit{IspodZnaka}($a, q$), \textit{IspodZnaka}($b, a$), \textit{IspodZnaka}($c, a$), \textit{IspodZnaka}($c, b$), \textit{IspodZnaka}($f, a$), \textit{IspodZnaka}($f, c$), \textit{IspodZnaka}($f, f$), \textit{IspodZnaka}($q, c$), \textit{IspodZnaka}($q, q$)
+
+    \newpage
+    
+    \begin{lstlisting}
+    Pronadi(){
+        ako Stog == aba<S>q<W>
+            Reduciraj1();
+        inace ako Stog == baf<Y>
+            Reduciraj2();
+        inace ako Stog == cc<S>
+            Reduciraj3();
+        inace ako Stog == q
+            Reduciraj4();
+        inace ako Stog == caba<W>
+            Reduciraj5();
+        inace ako Stog == ffa<S>q<W>
+            Reduciraj6();
+        inace ako Stog == nabla <S> && Ulaz = kraj niza
+            Prihvati();
+        inace
+            Odbaci();
+    }
+    \end{lstlisting}
+
+    \begin{tabular}{|>{\raggedright}m{4cm}|c|>{\raggedleft}m{3cm}|c|}
+            \hline
+            \centering stog & znak & \centering ulazni niz & akcija \\
+            \hline
+            $\nabla$ &  & $ababafcabaqqq\bot$ & \\
+            \hline
+             $\nabla $ & $a$ & $babafcabaqqq\bot$ & \textit{Pomakni}()\\
+            \hline
+             $\nabla a$ & $b$ & $abafcabaqqq\bot$ & \textit{Pomakni}()\\
+            \hline
+             $\nabla ab$ & $a$ & $bafcabaqqq\bot$ & \textit{Pomakni}()\\
+            \hline
+             $\nabla aba$ & $b$ & $afcabaqqq\bot$ & \textit{Pomakni}()\\
+            \hline
+             $\nabla abab$ & $a$ & $fcabaqqq\bot$ & \textit{Pomakni}()\\
+            \hline
+             $\nabla ababa$ & $f$ & $cabaqqq\bot$ & \textit{Pomakni}()\\
+            \hline
+             $\nabla ababaf$ & $c$ & $abaqqq\bot$ & \textit{Pomakni}()\\
+            \hline
+             $\nabla ababafc$ & $a$ & $baqqq\bot$ & \textit{Pomakni}()\\
+            \hline
+             $\nabla ababafca$ & $b$ & $aqqq\bot$ & \textit{Pomakni}()\\
+            \hline
+             $\nabla ababafcab$ & $a$ & $qqq\bot$ & \textit{Pomakni}()\\
+            \hline
+             $\nabla ababafcaba$ & $q$ & $qq\bot$ & \textit{Pomakni}()\\
+            \hline
+             $\nabla ababafcabaq$ & $q$ & $q\bot$ & \textit{Pronađi}()\\
+            \hline
+             $\nabla ababafcabaW$ & $q$ & $q\bot$ & \textit{Pronađi}()\\
+            \hline
+             $\nabla ababafY$ & $q$ & $q\bot$ & \textit{Pronađi}()\\
+            \hline
+             $\nabla abaS$ & $q$ & $q\bot$ & \textit{Pomakni}()\\
+            \hline
+             $\nabla abaSq$ & $q$ & $\bot$ & \textit{Pomakni}()\\
+            \hline
+             $\nabla abaSqq$ & $q$ & $\bot$ & \textit{Pronađi}()\\
+            \hline
+             $\nabla abaSqW$ & $q$ & $\bot$ & ???\\
+            \hline
+        \end{tabular}
+
+\end{solution}
+
+\newpage
+
+\begin{problem}{173}
+    Prikažite korake tijekom parsiranja niza $bbbcb$ primjenom zadanog $LR(1)$-parsera.\\
+    
+    \begin{tabular}{|c||c|c|c||m{0.5cm}|c|c|}
+    \hline
+    \multicolumn{1}{|c|}{stanje} & \multicolumn{3}{|c|}{akcija} & \multicolumn{3}{|c|}{novo stanje} \\
+    \hline
+    \hline
+     & $b$ & $c$ & $\bot$ & \centering $S$ & $A$ & $B$ \\
+    \hline
+    0 & P1 &  &  &  &  &  \\
+    \hline
+    1 & P2 &  &  &  & S3 &  \\
+    \hline
+    2 & P5 &  &  &  &  &  S6\\
+    \hline
+    3 & P4 &  &  &  &  &  S7\\
+    \hline
+    4 &  &  & R3 &  &  &  \\
+    \hline
+    5 &  & R3 &  &  &  &  \\
+    \hline
+    6 &  & P8 &  &  &  &  \\
+    \hline
+    7 &  &  & Prihvati &  &  &  \\
+    \hline
+    8 & R2 &  &  &  &  &  \\
+    \hline
+    \end{tabular}\\
+
+    R1 = \textit{Reduciraj}($S \xrightarrow[]{} bAB$)\\
+    \indent R2 = \textit{Reduciraj}($A \xrightarrow[]{} bBc$)\\
+    \indent R3 = \textit{Reduciraj}($B \xrightarrow[]{} b$)
+\end{problem}
+
+\begin{solution}
+    \begin{tabular}{|>{\raggedright}m{3cm}|c|c|}
+        \hline
+         \centering stog &  znak koji čitamo & akcija\\
+        \hline
+         $\nabla 0$ & $b$ &  P1 \\
+        \hline
+         $\nabla 0 b 1$ & $b$ &  P2 \\
+        \hline
+         $\nabla 0 b 1 b 2$ & $b$ &  P5 \\
+        \hline
+         $\nabla 0 b 1 b 2 b 5$ & $c$ & R3 \\
+        \hline
+         $\nabla 0 b 1 b 2 B6$ & $c$ & P8 \\
+        \hline
+         $\nabla 0 b 1 b 2 B6 c 8$ & $b$ & R2 \\
+        \hline
+         $\nabla 0 b 1 A 3$ & $b$ & R2 \\
+        \hline
+         $\nabla 0 b 1 A 3$ & $b$ & P4 \\
+        \hline
+         $\nabla 0 b 1 A 3 b 4$ & $\bot$ & R3 \\
+        \hline
+         $\nabla 0 b 1 A 3 B 7$ & $\bot$ & Prihvati \\
+        \hline
+         
+    \end{tabular}
+\end{solution}
+
+\newpage
+
+\begin{problem}{182}
+    Izgradite $SLR(1)$-parser za zadanu gramatiku. \\
+    (1) $S \xrightarrow[]{} AaBb$\\
+    (2) $A \xrightarrow[]{} a$\\
+    (3) $B \xrightarrow[]{} cA$\\
+    (4) $B \xrightarrow[]{} \varepsilon$
+\end{problem}
+
+\begin{solution}
+     \begin{tabular}{|c||c|c|c|c||m{0.5cm}|c|c|}
+    \hline
+    \multicolumn{1}{|c|}{stanje} & \multicolumn{4}{|c|}{akcija} & \multicolumn{3}{|c|}{novo stanje} \\
+    \hline
+    \hline
+     & $a$ & $b$ & $c$ & $\bot$ & \centering $S$ & $A$ & $B$ \\
+    \hline
+    0 & P1 &  &  &  &  & S2 &\\
+    \hline
+    1 & R2 & R2 &  &  &  &  &\\
+    \hline
+    2 & P3 &  &  &  &  &  &\\
+    \hline
+    3 &  & R4 & P4 &  &  &  & S5\\
+    \hline
+    4 & P1 &  &  &  &  & S6 &\\
+    \hline
+    5 &  & P7 &  &  &  &  &\\
+    \hline
+    6 &  & R3 &  &  &  &  &\\
+    \hline
+    7 &  &  &  & Prihvati &  &  &\\
+    \hline
+    \end{tabular}\\
+\end{solution}
+
+\begin{problem}{186}
+   Izgradite $LR(1)$-parser za zadanu gramatiku. \\
+    (1) $S \xrightarrow[]{} bA$\\
+    (2) $A \xrightarrow[]{} Sa$\\
+    (3) $A \xrightarrow[]{} \varepsilon$
+\end{problem}
+
+\begin{solution}
+     \begin{tabular}{|c||c|c|c||m{0.5cm}|c|c|}
+    \hline
+    \multicolumn{1}{|c|}{stanje} & \multicolumn{3}{|c|}{akcija} & \multicolumn{3}{|c|}{novo stanje} \\
+    \hline
+    \hline
+     & $a$ & $b$ & $\bot$ & \centering $S$ & $A$ & $B$ \\
+    \hline
+    0 &  & P1 &  &  &  &  \\
+    \hline
+    1 &  & P4 & R3 & S3 & S2 &  \\
+    \hline
+    2 &  &  & Prihvati &  &  & \\
+    \hline
+    3 & P5 &  & R2 &  &  & \\
+    \hline
+    4 & R3 & P4 & R3 & S7 & S6 &  \\
+    \hline
+    5 &  &  & R2 &  &  &  \\
+    \hline
+    6 & R1 &  &  &  &  &  \\
+    \hline
+    7 & P8 &  &  &  &  &  \\
+    \hline
+    8 & R2 &  & R2 &  &  &  \\
+    \hline
+    \end{tabular}\\
+\end{solution}
+
+\newpage
+
+\section{Semantička analiza}
+
+\begin{problem}{205}
+    Opišite postupak izgradnje potisnog automata za prijevodnu gramatiku.
+\end{problem}
+
+\begin{solution}
+    \begin{enumerate}
+        \item PA ima samo jedno stanje $q_0$ koje je ujedno i početno stanje 
+        \item skup ulaznih znakova PA je skup završnih znakova i oznaka kraja niza, $\Sigma = T \cup \bot$
+        \item skup znakova stoga PA su oznaka dna stoga $\nabla$, skup nezavršnih znakova $V$, skup završnih znakova koji su na desnim stranama produkcija, ali ne isključivo na krajnje lijevim mjestima, te izlazni završni znakovi (samo ako je na desnoj strani produkcije desno od krajnje lijevog nezavršnog ili ulaznog završnog znaka)
+        \item tablica PA popunjava se na sljedeći način:
+        \begin{itemize}
+            \item za produkciju $A \xrightarrow[]{} \, \xi \, b \, \phi \, \alpha$ (gdje su $\xi$, $\phi$ nizovi izlaznih završnih znakova, $\alpha$ niz nezavršnih i završnih znakova koji ne započinje izlaznim završnim znakom) u redak $A$ i stupac $b$ zapisuje se akcija \textit{Izlaz}($\xi \, \phi$); \textit{Zamijeni}($\alpha'$); \textit{Pomakni};
+            \item ako je izlazni završni znak \{$\xi$\} znak stoga, onda elementi tablice koji su u retku \{$\xi$\} određuju akcije 
+            \textit{Izlaz}($\xi$); \textit{Izvuci}; \textit{Zadrži};
+            \item ako je u $\varepsilon$-produkciji zadan niz izlaznih završnih znakova $\xi$, onda se za produkciju oblika $A \xrightarrow[]{} \xi$ u redak $A$ i stupce određene znakovima skupa PRIMIJENI($A \xrightarrow[]{} \varepsilon$ zapisuju akcije \textit{Izlaz}($\xi$); \textit{Izvuci}; \textit{Zadrži};
+            \item za produkciju $A \xrightarrow[]{} \xi \, \alpha$ (gdje je $\alpha$ niz znakova koji započinje nezavršnim znakom gramatike, a $\xi$ niz izlaznih završnih znakova gramatike) onda se u redak $A$ i stupce određene znakovima skupa PRIMIJENI($A \xrightarrow[]{} \alpha$ zapisuju akcije \textit{Izlaz}($\xi$); \textit{Zamijeni}($\alpha'$); \textit{Zadrži};
+        \end{itemize}
+    \end{enumerate}
+\end{solution}
+
+
+\begin{problem}{206}
+    Objasnite što je provjera vrijednosti obilježja i opišite pojedine postupke za provjeru vrijednosti obilježja. 
+\end{problem}
+
+\begin{solution}
+    \noindent Provjera vrijednosti obilježja koristi atributnu prijevodnu gramatiku. Ako se tijekom provjere vrijednosti obilježja ustanovi pogreška, onda semantički analizator ispisuje poruku o pogrešci, pridruži obilježju vrijednost \textit{Pogreška}, pokrene postupak oporavka od pogreške i nastavi analizu izvornog programa.
+
+    \noindent \uwave{Provjera vrijednosti obilježja naredbi deklaracija} Tijekom obrade naredbi deklaracija provjerava se njihova ispravnost. U tablicu identifikatora zapisuju se vrijednosti obilježja.
+
+    \noindent \uwave{Provjera vrijednosti obilježja izraza} Za npr. produkciju $E_V \xrightarrow[]{} \mathbf{INT}$ svojstvu $V$ pridruži se vrijednost obilježja konstante ($\mathbf{IDN}$ označava int konstantu npr. $123$). Ako je produkcijom definirana varijabla, onda se vrijednost svojstva $V$ određuje na temelju vrijednosti obilježja koje je zapisano u tablici identifikatora tijekom deklaracije varijable. 
+
+    \noindent \uwave{Provjera vrijednosti obilježja ulančanih naredbi} Naredbe se ulančavaju primjenom operatora \textit{;} Obilježjima naredbi pridružuju se dvije vrijednosti \textit{BezPogreške} i \textit{Pogreška}.
+\end{solution}
+
+\begin{problem}{207}
+    Opište svojstva $L$-atributne prijevodne gramatike. 
+\end{problem}
+
+\begin{solution}
+    \noindent Atributna je prijevodna gramatika $L$-atributna ako i samo ako vrijedi:
+    \begin{enumerate}
+        \item Vrijednost \textit{nasljednog svojstva} znaka desne strane produkcije računa se na temelju vrijednosti nasljednih svojstava nezavršnog znaka lijeve strane produkcije i na temelju vrijednosti svojstava znakova desne strane produkcije koji su lijevo od zadanog znaka.
+        \item Vrijednost \textit{izvedenog svojstva} nezavršnog znaka lijeve strane produkcije računa se na temelju vrijednosti nasljednih svojstava nezavršnog znaka lijeve strane produkcije i na temelju vrijednosti svojstava znakova desne strane produkcije.
+        \item Vrijednost izvedenog svojstva izlaznog završnog znaka računa se na temelju nasljednih svojstava tog istog izlaznog završnog znaka.
+    \end{enumerate}
+\end{solution}
+
+\begin{problem}{208}
+     Nabrojite i objasnite formalne modele semantičkog analizatora. 
+\end{problem}
+\begin{solution}
+\begin{itemize}
+    \item Model zasnovan na \textit{prevođenju izvornog jezika} u jezik koji ima definiranu semantiku
+    \item \textit{Izvođenje na apstraktnom stroju} zasniva se na skupu pravila primjenom koji se simulira izvođenje izvornog programa. Apstraktno se računalo definira stanjima. Izvođenje programa simulira se skupom funkcija koje mijenjaju stanje apstraktnog računala.
+    \item Formalni model koji koristi \textit{skup aksioma}. Aksiomi su logičke tvrdnje koje korisnik zadaje u različitim dijelovima izvornog programa, a njima izriče očekivani rezultat izvođenja tog dijela izvornog programa. Semantička ispravnost programa zasniva se na provjeri istovjetnih statičkih logičkih tvrdnji i rezultata dinamičkog izvođenja programa.
+\end{itemize}
+\end{solution}
+
+\begin{problem}{211}
+    Objasnite sintaksom vođenu semantičku analizu.
+\end{problem}
+
+\begin{solution}
+    \noindent Sintaksom upravljani jezični procesori zasnovani su na primjeni atributne prijevodne gramatike, a sintaksni je analizator središnji proces analize izvornog i sinteze ciljnog programa. Sintaksni analizator pokreće izvođenje semantičkih akcija u cilju provjere semantičkih pravila. Semantičke se akcije ugrađuju u produkcije formalne gramatike kao izlazni završni znakovi. Produkcijama gramatike pridružuju se pravila računanja vrijednosti svojstava. Prijevodna gramatika proširena svojstvima i pravilima računanja vrijednosti tih svojstava naziva se atributna prijevodna gramatika. 
+\end{solution}
+
+\begin{problem}{212}
+    Definirajte atributnu prijevodnu gramatiku.
+\end{problem}
+
+\begin{solution}
+    \noindent Atributna je gramatika proširena prijevodna gramatika. Znakovima gramatike dodjeljuje se konačni skup svojstava i pravila računanja tih svojstava. Svojstva se dijele na \textit{nasljedna} (vrijednost nasljednog svojstva znaka desne strane produkcije određuje se na temelju vrijednosti svojstava ostalih znakova koji su na lijevoj ili desnoj strani produkcije) i \textit{izvedena} (vrijednost izvedenog svojstva nezavršnog znaka lijeve strane produkcije računa se na temelju svojstava ostalih znakova koji su na lijevoj ili desnoj strani produkcije).
+\end{solution}
+
+\begin{problem}{213}
+    Opišite algoritam provjere jednakosti tipova obilježja temeljen na provjeri jednakosti strukture obilježja. 
+\end{problem}
+
+\begin{solution}
+    \noindent Za potrebe ispitivanja jednakosti dva obilježja koristi se postupak ujednačavanja. Ujednačavanje obilježja s i t  postupak je utvrđivanja jednakosti dva obilježja na način da se varijable u oba obilježja zamjene odgovarajućim zajedničkim vrijednostima. Tijekom postupka ujednačavanja uspoređuju se čvorovi stabala strukture. Ako su čvorovi stabala označeni istim konsturktorom ili ako je jedan od čvorova označen varijablom onda se oni združe u jednu grupu.
+\end{solution}
+
+\begin{problem}{214}
+     Objasnite kako se obrađuju izvedena svojstva izlaznih završnih znakova koji se ne stavljaju na stog.
+\end{problem}
+
+\begin{solution}
+    \noindent Izlazni završni znak \{\textit{Rezultat}\} pokreće izvođenje semantičke akcije koja ispisuje vrijednost aritmetičkog izraza. Izlaznom završnom znaku \{\textit{Rezultat}\} dodjeljuje se svojstvo sa značenjem rezultata aritmetičkog izraza generiranog iz nezavršnog znaka $S$. \{\textit{Rezultat$_r$}\} oznaka izlaznog završnog znaka \{\textit{Rezultat}\} kojemu je dodijeljeno svojstvo $r$. Vrijednost aritmetičkog izraza računa se korak po korak primjenom produkcija gramatike. Međurezultati računanja prenose se sintaksnim stablom od ulaznih završnih znakova do izlaznog završnog znaka \{\textit{Rezultat}\}. Izračunata vrijednost aritmetičkog izraza pridruži se svojstvu $r$ izlaznog završnog znaka \{\textit{Rezultat}\}. 
+\end{solution}
+
+\begin{problem}{215}
+     Navedite i objasnite algoritam ispitivanja jednakosti obilježja konstantnih vrijednosti. 
+\end{problem}
+
+\begin{solution}
+\vspace{-0.3cm}
+\begin{lstlisting}
+    Jednakost(s, t) {
+        if ((s i t jednake jednostavne vrijednosti) || (s i t ista korisnicka imena))
+            return True
+        else if ((s == Polje(s1, s2) && (t == Polje(t1, t2)))
+            return ((Jednakost(s1, t1)) & (Jednakost(s2, t2)))
+        else if ((s == Kazaljka(s1)) && (t == Kazaljka(t1)))
+            return (Jednakost(s1, t1))
+        else if ((s == s1 -> s2) && (t == t1 -> t2))
+            return ((Jednakost(s1, t1)) & (Jednakost(s2, t2)))
+        else if ((s == s1 x s2) && (t == t1 x t2))
+            return ((Jednakost(s1, t1)) & (Jednakost(s2, t2)))
+        else return False
+    }
+\end{lstlisting}    
+\end{solution}
+
+\begin{problem}{217}
+    Opišite korake gradnje atributnog generativnog stabla. Definirajte potpuno atributno generativno stablo.
+\end{problem}
+
+\begin{solution}
+    \begin{enumerate}
+        \item Primjenom produkcija prijevodne gramatike izgradi se generativno stablo za zadani niz ulaznih završnih znakova.
+        \item Svojstvima ulaznih završnih znakova gramatike pridruže se pročitane vrijednosti. 
+        \item Nasljednim svojstvima početnog nezavršnog znaka pridruže se početne vrijednosti koje su definirane zajedno s produkcijama gramatike. 
+        \item Pretražuje se generativno stablo. Traži se svojstvo koje nema izračunatu vrijednost. Izračuna se vrijednost izabranog svojstva na temelju ostalih vrijednosti. Opisani se postupak nastavlja traženjem sljedećeg svojstva i računanjem njegovih vrijednosti. 
+    \end{enumerate}
+    \noindent Atributno je generativno stablo potpuno ako je moguće izračunati vrijednost svih svojstava koja su dodijeljena svim znakovima gramatike. 
+\end{solution}
+
+\begin{problem}{218}
+    Objasnite kako se obrađuju svojstva izvorišta koja nemaju dostupne vrijednosti.
+\end{problem}
+
+\begin{solution}
+    Budući da vrijednosti svojstava izvorišta nisu dostupne, potisni automat stavlja na stog kazaljku koja pokazuje na listu polja dodijeljenih svojstvima odredišta. Vrijednosti kazaljki prenose se od vrha generativnog stabla prema dnu sve dok vrijednosti svojstava izvorišta ne postanu dostupne. 
+\end{solution}
+
+\begin{problem}{220}
+    Objasnite razliku između izvedenih i nasljednih svojstava. Kako se izvedena i nasljedna svojstva spremaju na stog tijekom parsiranja od vrha prema dnu?
+\end{problem}
+
+\begin{solution}
+    \noindent Vrijednost \uwave{nasljednog svojstva} znaka desne strane produkcije računa se na temelju vrijednosti svojstava ostalih znakova koji su na lijevoj ili desnoj strani produkcije. Vrijednost \uwave{izvedenog svojstva} nezavršnog znaka lijeve strane produkcije računa se na temelju vrijednosti svojstava ostalih znakova koji su na lijevoj ili desnoj strani produkcije. \\ Parser na stog stavlja oznake semantičkih akcija. Zajedno s oznakom semantičke akcije na stog se stavljaju vrijednosti svojstava te oznake.
+\end{solution}
+
+\begin{problem}{221}
+     Navedite zadatke semantičkog analizatora. 
+\end{problem}
+
+\begin{solution}
+    \begin{enumerate}
+        \item Određivanje značenja složenim sintaksnim strukturama
+        \item Provjera semantičkih pravila
+        \item Postupci pretvorbe vrijednosti obilježja
+        \item Popunjavanje tablice znakova (vrsta identifikatora, podatkovni tip i djelokrug varijable)
+        \item Prenošenje vrijednosti svojstava sintaksnih cjelina ostalim dijelovima jezičnog procesora putem stoga/sintaksnog stabla
+        \item Prenošenje vrijednosti obilježja po sintaksnom stablu
+        \item Izravnavanje sintaksnog stabla
+        \item Nadziranje pogrešaka
+        \item Provjera podudarnosti podatkovnih tipova varijabli
+        \item Provjera tijeka izvođenja programa
+        \item Provjera ispravnosti definicije
+        \item Provjera imena
+    \end{enumerate}
+\end{solution}
+
+\newpage
+
+\begin{problem}{224}
+    Izgradite potisni automat za zadanu atributnu prijevodnu gramatiku. Za sve akcije \textit{Zamijeni} prikazati stanje na stogu neposredno prije i neposredno poslije primjene akcije. 
+    \\
+    (1) $S \xrightarrow[]{} a_p \, b_q \, A_r \, \{X_v\}$ \indent $v \xleftarrow[]{} p \times q + r$\\
+    (2) $A_p \xrightarrow[]{} a_q \, B_r$ \indent \indent \indent $p \xleftarrow[]{} q+r$\\
+    (3) $B_p \xrightarrow[]{} c_q$ \indent \indent \indent \indent $p \xleftarrow[]{} q$
+\end{problem}
+
+\begin{solution}
+    \noindent Dodajemo akcijske znakove
+
+    \noindent \begin{tabular}{ll}
+          \{$R$\}$_{x1, \,x2, \, x3, \, x4}$ & $x4 \xleftarrow[]{}  x1 \cdot x2 + x3 $\\          
+          \{\textit{Zbroj}\}$_{x1, \,x2, \, x3}$ & $x3 \xleftarrow[]{} x1 + x2$\\
+    \end{tabular}\\
+
+    \noindent Novi oblik gramatike:
+    
+    \noindent \begin{tabular}{ll}
+        $S \xrightarrow[]{} a_p \, b_q \, A_r \, $\{$R$\}$_{x1, \, x2, \, x3, \, x4}\{X_v\}$  &  $x1 \xleftarrow[]{} p$, $x2 \xleftarrow[]{} q$, $x3 \xleftarrow[]{} r$, $v \xleftarrow[]{} x4 $\\
+         $A_p \xrightarrow[]{} a_q \, B_r$\{\textit{Zbroj}\}$_{x1, \,x2, \, x3}$  & $x1 \xleftarrow[]{} q$, $x2 \xleftarrow[]{} r$, $p \xleftarrow[]{} x3$ \\
+         $B_p \xrightarrow[]{} c_q$ & $p \xleftarrow[]{} q$
+    \end{tabular}\\
+
+    \noindent Tablica potisnog automata:\\ 
+
+    \begin{tabular}{|c|c|c|c|c|}
+        \hline
+         & $a$ & $b$ & $c$ & $\bot$\\
+        \hline
+        $S$ & (1) & \textit{Odbaci} & \textit{Odbaci} & \textit{Odbaci} \\
+        \hline
+        $A$ & (2) & \textit{Odbaci} & \textit{Odbaci} & \textit{Odbaci} \\
+        \hline
+        $B$ & \textit{Odbaci} & \textit{Odbaci} & (3) &  \textit{Odbaci}\\
+        \hline
+        $b$ & \textit{Odbaci} & (3) & \textit{Odbaci} &  \textit{Odbaci}\\
+        \hline
+        $\nabla$ & \textit{Odbaci} & \textit{Odbaci} & \textit{Odbaci} &  \textit{Prihvati}\\
+        \hline
+        \{$X$\} & \multicolumn{4}{|c|}{\textit{Izlaz}(\{$X$\}); \textit{Izvuci}; \textit{Zadrži};}   \\
+        \hline
+        \{$R$\} & \multicolumn{4}{|c|}{\textit{Izlaz}(\{$R$\}); \textit{Izvuci}; \textit{Zadrži};}   \\
+        \hline
+         \{\textit{Zbroj}\} &  \multicolumn{4}{|c|}{\textit{Izlaz}(\{\textit{Zbroj}\}); \textit{Izvuci}; \textit{Zadrži};}  \\
+        \hline
+    \end{tabular}\\
+
+    (1) \textit{Zamijeni}(\{$X$\}\{\textit{Zbroj}\}$A$\{\textit{Umnožak}\}$b$); \textit{Pomakni};
+    
+    (2) \textit{Zamijeni}(\{\textit{Zbroj}\}$B$); \textit{Pomakni};
+
+    (3) \textit{Izvuci}: \textit{Pomakni};
+ 
+\end{solution}
+
+\newpage
+
+\section{Potpora izvođenju ciljnog programa}
+
+\begin{problem}{227}
+     Opišite algoritam gradnje lanca kazaljki nelokalnih imena i vektora dubine gniježđenja kod
+    statičkog pravila djelokruga ugniježđenih procedura. 
+\end{problem}
+
+\begin{solution}
+    \noindent Način određivanja vrijednosti kazaljke nelokalnih imena pozvane procedure i gradnja vektora ovise o dubini gniježđenja pozivajuće i pozvane procedure. Algoritam zasebno obrađuje dva različita slučaja: 
+    \begin{enumerate}
+        \item Pozvana procedura deklarirana je naredbama pozivajuće procedure
+
+        $\xrightarrow[]{}$ Kazaljci nelokalnih imena pozvane procedure odredi se vrijednost tako da pokazuje na opisnik pozivajuće procedure
+
+        $\xrightarrow[]{}$ Vektoru dubine gniježđenja doda se novi element $i = j + 1$ koji pokazuje na opisnik pozvane procedure (dubina je gniježđenja pozvane procedure $i = j + 1$)
+
+        \item Pozvana procedura deklarirana je naredbama procedure koja ugnježđuje pozvanu i pozivajuću proceduru
+
+        $\xrightarrow[]{}$ Kazaljci nelokalnih imena pozvane procedure odredi se vrijednost tako da pokazuje na opisnik procedure koji se dohvati slijeđenjem $j - (i - 1)$ kazaljki nelokalnih imena počev od kazaljke pozivajuće procedure 
+
+        $\xrightarrow[]{}$ Vrijednost elementa vektora dubine gniježđenja na mjestu $i$ spremi se u opisnik pozvane procedure. Element vektora na mjestu $i$ poprimi vrijednost kazaljke na opisnik pozvane procedure. 
+    \end{enumerate}
+\end{solution}
+
+\begin{problem}{228}
+     Objasnite povezivanje imena izvornog programa i objekata ciljnog programa te relaciju okoline i relaciju stanja. 
+\end{problem}
+
+\begin{solution}
+    \noindent Način povezivanja imena izvornog programa, podatkovnih objekata ciljnog programa i vrijednosti podatkovnih objekata određen je vrijednostima dviju relacija: \textit{relacija okoline} pridružuje imenima izvornog programa podatkovne objekte ciljnog programa, a \textit{relacija stanja} pridružuje podatkovnom objektu vrijednost. 
+\end{solution}
+
+\begin{problem}{229}
+    Ukratko definirajte relaciju okoline i relaciju stanja.
+\end{problem}
+
+\begin{solution}
+    \noindent Relacija okoline i relacija stanja relacije su čije vrijednosti određuju način povezivanja imena izvornog programa, podatkovnih objekata ciljnog programa i vrijednosti podatkovnih objekata.
+\end{solution}
+
+\begin{problem}{230}
+    Objasnite načine ostvarenja dinamičkog pravila djelokruga.
+\end{problem}
+
+\begin{solution}
+    \noindent Ako se primjenjuje dinamičko pravilo djelokruga, onda se važeće deklaracije nelokalnih imena nasljeđuju iz pozivajuće procedure. Dinamičko pravilo djelokruga moguće je ostvariti na dva načina:
+
+    \begin{enumerate}
+        \item Pretraživanje po dubini = ako ime nije lokalno definirano, pretražuju se opisnici procedura primjenom lanca kazaljki sve dok se ne pronađe opisnik koji sadrži zadanu deklaraciju imena
+        \item Pretraživanje statičke memorije = vrijednosti svih lokalno definiranih imena spremaju se u statičku memoriju; prije spremanja vrijednosti lokalnih deklaracija provjeri se sadržaj statičke memorije, ako je zadano ime deklarirano, onda se vrijednosti prethodnih deklaracija sačuvaju u opisniku pozvane procedure; u statičkoj se memoriji prethodne vrijednosti deklaracija zamijene novim vrijednostima; nakon završetka izvođenja pozvane procedure prethodno sačuvane vrijednosti deklaracija prepišu se iz njezinog opisnika u statičku memoriju
+    \end{enumerate}
+\end{solution}
+
+\begin{problem}{231}
+    Opišite mehanizam povratne razmjene vrijednosti parametara procedura te navedite način ostvarenja.
+\end{problem}
+
+\begin{solution}
+    \noindent Ako se koristi mehanizam povratne razmjene vrijednosti, onda se u opisnik pozvane procedure zapisuju vrijednosti aktualnih parametara i njihove adrese:
+    \begin{enumerate}
+        \item Formalni su parametri lokali podaci pozvane procedure. U opisniku pozvane procedure ostavljaju se prazna mjesta za zapis vrijednosti i adresa aktualnih parametara.
+        \item Pozivajuća procedura odredi vrijednosti i adrese aktualnih parametara i zapiše ih u opisnik pozvane procedure. Pozvana procedura koristi i mijenja isključivo lokalne vrijednosti spremljene u svom opisniku. Nakon što završi njeno izvođenje, pozvana procedura pročita iz svog opisnika vrijednosti aktualnih parametara i njihove adrese. Vrijednosti aktualnih parametara spreme se u memoriju primjenom pročitanih adresa.
+    \end{enumerate}
+\end{solution}
+
+\begin{problem}{232}
+    Navedite i kratko objasnite postupke za određivanje djelokruga deklaracije nelokalnih imena.
+\end{problem}
+
+\begin{solution}
+    \noindent Djelokrug deklaracije nelokalnih imena identifikatora određuje se na jedan od sljedećih načina: (1) statički djelokrug bez ugniježđenih procedura - sve su procedure deklarirane isključivo naredbama glavnog programa, a ako identifikator nije deklariran naredbama procedure, potrebno ga je deklarirati naredbama glavnog programa; (2) statički djelokrug ugniježđenih procedura - pravilo se zasniva na pravilu najbliže ugniježđene procedure; (3) dinamički djelokrug - ako naredbe pozvane procedure ne deklariraju ime identifikatora, onda su važeće deklaracije pozivajuće procedure, a postupak određivanja važeće deklaracije nastavlja pretraživanje ostalih pozivajućih procedura. 
+\end{solution}
+
+\begin{problem}{233}
+    Objasnite način ostvarenja statičkog pravila djelokruga nelokalnih imena ugniježđenih procedura.
+\end{problem}
+
+\begin{solution}
+    \noindent Statičko pravilo djelokruga ugniježđenih procedura zasniva se na pravilu najbliže pozivajuće procedure: 
+    \begin{enumerate}
+        \item Djelokrug deklaracije koja je zadana naredbom procedure uključuje sve naredbe te procedure. 
+        \item Ako ime $x$ nije deklarirano naredbama procedure $q()$, onda je važeća deklaracija zadana naredbama ugnježđujuće procedure $p()$ za koju vrijedi: ime $x$ deklarirano je naredbama procedure $p()$ i ne postoji nijedna druga procedura $r()$ za koju vrijedi: ime $x$ deklarirano je naredbama procedure $r()$, procedura $p()$ ugnježđuje proceduru $r()$ i procedura $r()$ ugnježđuje proceduru $q()$.
+    \end{enumerate}
+\end{solution}
+
+\begin{problem}{234}
+    Navedite osnovne načine razmjene ulazno/izlaznih parametara procedura i što se zapisuje u opisnik pozvane procedure prilikom pojedinog načina razmjene. 
+\end{problem}
+
+\begin{solution}
+    \noindent \begin{enumerate}
+        \item Razmjena vrijednosti = u opisnik pozvane procedure zapisuju se vrijednosti aktualnih parametara
+        \item Povratna razmjena vrijednosti = u opisnik pozvane procedure zapisuju se vrijednosti aktualnih parametara i njihove adrese
+        \item Razmjena adrese = u opisnik pozvane procedure zapisuju se adrese aktualnih parametara
+        \item Razmjena imena = u opisnik pozvane procedure zapisuju se podaci koji se koriste za računanje adrese aktualnih parametara
+    \end{enumerate}
+\end{solution}
+
+\begin{problem}{235}
+    Objasnite pojmove djelokrug deklaracije i životni vijek pridruživanja imena. Što se događa sa životnim vijekom pridruživanja imena prilikom rekurzivnih poziva potprograma? 
+\end{problem}
+
+\begin{solution}
+    \noindent Područje programa u kojem je važeća deklaracija varijable naziva se djelokrug varijable. Životni vijek procedure započinje izvođenjem njezine početne naredbe, a završava izvođenjem njezine završne naredbe. Priliko rekurzivnih poziva potprograma životni vijek aktiviranog potprograma ugniježđen je u životni vijek pozivajućeg (pot)programa. 
+\end{solution}
+
+\begin{problem}{236}
+    Objasnite djelokrug deklaracije i navedite moguća pravila definiranja djelokruga deklaracija.
+\end{problem}
+
+\begin{solution}
+   \noindent Ako varijabla, procedura, polje ili neki drugi identifikator nije lokalno deklariran naredbama procedure, onda 
+    pravila djelokruga određuju njegovu važeću deklaraciju. Djelokrug deklaracije nelokalnih imena identifikatora određuje se na jedan od sljedećih načina: statički djelokrug bez ugniježđenih procedura, statički djelokrug ugniježđenih 
+procedura i dinamički djelokrug.
+\end{solution}
+
+\begin{problem}{237}
+     Objasnite vektor dubine gniježđenja i algoritam njegove izgradnje. 
+\end{problem}
+
+\begin{solution}
+    \noindent Čitanje vrijednosti ulančanih kazaljki nelokalnih imena moguće je izbjeći uporabom vektora dubine gniježđenja. Ako je dubina gniježđenja procedure koja se izvodi $n$, onda vektor ima $n$ elemenata. Dubini gniježđenja $i$, $1 \leq i \leq n$, dodjeljuje se element vektora $i$. Element vektora $i$ kazaljka je koja pokazuje na opisnik posljednje aktivirane procedure dubine gniježđenja $i$. Ako se želi dohvatiti deklaracija imena $a$ dubine gniježđenja $i$, onda se čitanjem kazaljke u vektoru na mjestu $i$ izravno dohvati opisnik procedure koja deklarira zadano ime $a$.
+\end{solution}
+
+\begin{problem}{225}
+    Za svaki od četiri načina prenošenja parametara odredite stanja varijabli \texttt{j}, \texttt{k}, \texttt{l} te polja \texttt{i} nakon izvođenja zadanog programskog odsječka.
+\begin{lstlisting}
+    int i[3] = {5, 6, 7}, j = 8, k = 2, l = 0;
+    divmod(int a, int b, int c, int d)
+    {
+        c = a / b;
+        d = a % b;
+        l = a % b + 1;
+    }
+    divmod(i[k], j, k, l);
+\end{lstlisting}
+\end{problem}
+
+\begin{solution}
+    \begin{tabular}{|c|c|c|c|c|}
+    \hline
+        formalni parametri & \texttt{a} & \texttt{b} & \texttt{c} &  \texttt{d}\\
+    \hline
+        aktualni parametri & \texttt{i[2]} & \texttt{j} & \texttt{k} &  \texttt{l}\\
+    \hline
+    \end{tabular}\\
+    
+\begin{comment}
+        
+\begin{multicols}{2}
+    
+    \noindent \underline{Mehanizam razmjene vrijednosti}\\
+
+    \begin{tabular}{|c|c|c|}
+    \hline 
+        & prije & poslije \\
+    \hline
+        \texttt{i} & \{5, 6, 7\} & \{5, 6, 7\}\\
+    \hline
+        \texttt{j} & 8 & 8\\
+    \hline
+        \texttt{k} & 2 & 2\\
+    \hline
+        \texttt{l} & 0 & 8\\
+    \hline     
+    \end{tabular}\\
+
+    \noindent \underline{Mehanizam razmjene imena} \\
+
+    \begin{tabular}{|c|c|c|}
+    \hline 
+        & prije & poslije \\
+    \hline
+        \texttt{i} & \{5, 6, 7\} & \\
+    \hline
+        \texttt{j} & 8 & \\
+    \hline
+        \texttt{k} & 2 & \\
+    \hline
+        \texttt{l} & 0 & \\
+    \hline 
+    \end{tabular}\\
+    
+\end{multicols}
+\end{comment}
+\end{solution}
+
+\newpage
+
+\begin{problem}{238}
+     Za prikazani programski odsječak odredite ispis ako se kod poziva potprograma koristi: (a) razmjena vrijednosti, (b) razmjena adresa, (c) razmjena imena i (d) povratna razmjena vrijednosti.
+\begin{lstlisting}
+    varijabla x = 0, y = 3, z = -1;
+    polje o[3] = 10, o[4] = 20;
+        Racunaj(p, q, r) {
+            z = p + x
+            q = q + 1
+            print(p, q, r);
+            r = z + q
+        }
+    {
+        za x = 3 do 4 {
+            Racunaj(o[x], o[3 + x % 2], z);
+            print(x, y, z, o[3], o[4]);
+        }
+    }
+\end{lstlisting}
+\end{problem}
+
+\begin{solution}
+    \noindent \underline{Mehanizam razmjene imena}\\
+
+    \begin{tabular}{|c|c|c|c|c|c|c|c|}
+    \hline
+         \texttt{x} & \texttt{y} & \texttt{z} & \texttt{o[3]} & \texttt{o[4]} & \texttt{p} & \texttt{q} & \texttt{r} \\
+    \hline
+    \hline
+        0 & 3 & -1 & 10 & 20 & \texttt{o[x]} & \texttt{o[3 + x \% 2]} & \texttt{z}  \\
+    \hline
+        3 & 3 & -1 & 10 & 20 & \texttt{o[3]} & \texttt{o[4]} & -1 \\
+    \hline
+        3 & 3 & 13 & 10 & 20 & \texttt{o[3]} & \texttt{o[4]} & 13 \\
+    \hline
+        3 & 3 & 4 & 10 & 20 & \texttt{o[3]} & \texttt{o[4]} & 4 \\
+    \hline
+        \multicolumn{8}{|c|} {Ispis: \texttt{10 3 4}}\\
+    \hline
+        3 & 3 & 24 & 10 & 20 & \texttt{o[3]} & \texttt{o[4]} & 24 \\
+    \hline
+        \multicolumn{8}{|c|} {Ispis: \texttt{3 3 24 10 20}}\\
+    \hline
+        4 & 3 & 24 & 10 & 20 & \texttt{o[x]} & \texttt{o[3 + x \% 2]} & \texttt{z} \\
+    \hline
+        4 & 3 & 24 & 10 & 20 & \texttt{o[4]} & \texttt{o[3]} & 24 \\
+    \hline
+        4 & 3 & 4 & 10 & 20 & \texttt{o[4]} & \texttt{o[3]} & 4 \\
+    \hline
+        \multicolumn{8}{|c|} {Ispis: \texttt{20 4 4}}\\
+    \hline
+        4 & 3 & 14 & 10 & 20 & \texttt{o[4]} & \texttt{o[3]} & 14 \\
+    \hline
+        \multicolumn{8}{|c|} {Ispis: \texttt{4 3 14 10 20}}\\
+    \hline
+    
+    \end{tabular}
+\end{solution}
+
+\newpage
+
+\begin{problem}{240}
+    Za zadani program prikažite sadržaj opisnika procedura u trenutku prije izvođenja naredbe \texttt{return x + y + 1} ako se koristi: (a) statičko pravilo djelokruga, (b) dinamičko pravilo djelokruga. 
+\end{problem}
+
+\begin{solution}
+\begin{multicols}{2}
+
+\begin{lstlisting}
+    Glavni()
+        int y = 3;
+        def Z(a)
+            int r = 5
+            def X(x) {
+                return x+y+1;
+            }
+            def Y(y){
+                return X(y)+1;
+            }
+        {
+            Y(a);
+        }
+    {
+        print Z(y+1)
+    }
+\end{lstlisting}
+
+\columnbreak
+
+Ako se koristi statičko pravilo djelokruga ugniježđenih procedura, vrijedi da upravljačka kazaljka procedure pokazuje na proceduru koja ju je pozvala, a kazaljka nelokalnih imena procedure pokazuje na proceduru u kojoj je trenutna procedura ugniježđena. 
+
+Ako se koristi dinamičko pravilo djelokruga ugniježđenih procedura, vrijedi da upravljačka kazaljka procedure pokazuje na proceduru koja ju je pozvala, a kazaljka nelokalnih imena procedure također pokazuje na proceduru koja ju je pozvala.  
+ 
+\end{multicols} 
+
+\vspace{-0.6cm}
+
+\begin{multicols}{2}
+\noindent \underline{Statičko pravilo djelokruga ugniježđenih procedura}\\
+
+\noindent 
+\begin{tabular}{|c|}
+    \hline
+    \textbf{Opisnik programa} \texttt{Glavni()} \\
+    \hline
+    Lokalni podaci \texttt{y = 3} \\
+    \hline
+    \textbf{Opisnik potprograma} \texttt{Z()} \\
+    \hline
+    Ulazni parametri \texttt{a = 4}\\
+    \hdashline
+    Upravljačka kazaljka (\textit{pokazuje na} \texttt{Glavni}) \\
+    \hdashline
+    Kazaljka nelokalnih imena (\textit{pokazuje na} \texttt{Glavni}) \\
+    \hdashline
+    Lokalni podaci \texttt{r = 5} \\
+    \hline
+    \textbf{Opisnik potprograma} \texttt{Y()} \\
+    \hline
+    Ulazni parametri \texttt{y = 4}\\
+    \hdashline
+    Upravljačka kazaljka (\textit{pokazuje na} \texttt{Z})\\
+    \hdashline
+    Kazaljka nelokalnih imena (\textit{pokazuje na} \texttt{Z})\\
+    \hdashline
+    Lokalni podaci (\textit{nema ih}) \\
+    \hline
+    \textbf{Opisnik potprograma} \texttt{X()} \\
+    \hline
+    Ulazni parametri \texttt{x = 4} \\
+    \hdashline
+    Upravljačka kazaljka (\textit{pokazuje na} \texttt{Y})\\
+    \hdashline
+    Kazaljka nelokalnih imena (\textit{pokazuje na} \texttt{Z}) \\
+    \hdashline
+    Lokalni podaci (\textit{nema ih}) \\
+    \hline    
+\end{tabular}\\
+
+\columnbreak
+
+\noindent \underline{Dinamičko pravilo djelokruga ugniježđenih procedura}\\
+
+
+\begin{tabular}{|c|}
+     \hline
+      \textbf{Opisnik programa} \texttt{Glavni()} \\
+     \hline
+      Lokalni podaci \texttt{y = 3}\\
+     \hline
+     \textbf{Opisnik potprograma \texttt{Z()}} \\
+     \hline
+     Ulazni parametri \texttt{a = 4}\\
+     \hdashline
+     Upravljačka kazaljka (\textit{pokazuje na} \texttt{Glavni})\\
+     \hdashline
+     Kazaljka nelokalnih imena (\textit{pokazuje na} \texttt{Glavni})\\
+     \hdashline
+     Lokalni podaci \texttt{r = 5}\\
+     \hline
+     \textbf{Opisnik potprograma} \texttt{Y()}\\
+     \hline
+     Ulazni parametri \texttt{y = 4} \\
+     \hdashline
+     Upravljačka kazaljka (\textit{pokazuje na} \texttt{Z}) \\
+     \hdashline
+     Kazaljka nelokalnih imena (\textit{pokazuje na} \texttt{Z}) \\
+     \hdashline
+     Lokalni podaci (\textit{nema ih}) \\
+     \hline
+     \textbf{Opisnik potprograma} \texttt{X()} \\
+     \hline
+     Ulazni parametri \texttt{x = 4} \\
+     \hdashline
+     Upravljačka kazaljka (\textit{pokazuje na} \texttt{Y})\\
+     \hdashline
+     Kazaljka nelokalnih imena (\textit{pokazuje na} \texttt{Y})\\
+     \hdashline
+     Lokalni podaci \textit{nema ih} \\
+     \hline
+     
+     
+\end{tabular}\\
+\end{multicols}
+\end{solution}
+
+
+\begin{problem}{243}
+    Prikažite razliku između razmjene parametara primjenom mehanizma razmjene adresa i mehanizma razmjene imena na sljedećem programu:
+\begin{lstlisting}
+    var x = 0
+    polje A = {10, 20} // A[0]=10, A[1]=20
+    P(a) {
+        x = 1
+        a = 100
+        print((A[0], A[1])
+    }
+    {
+        P(A[x])
+    }
+\end{lstlisting}
+\end{problem}
+
+\begin{solution}
+\noindent \underline{Mehanizam razmjene adresa}
+
+\begin{itemize}
+    \item U opisniku pozvane procedure ostavljaju se praznam mjesta za adrese aktualnih parametara
+    \item Pozivajuća procedura izračuna adrese aktualnih parametara, zapiše ih u opisnik pozvane procedure koja ih potom koristi
+\end{itemize}
+
+\begin{tabular}{|c|c|c|c|}
+    \hline
+    \texttt{x} & \texttt{a} &  \texttt{A[0]} &  \texttt{A[1]}\\
+    \hline
+    0 & \texttt{A[x]} & 10 & 20 \\
+    \hline
+    1 & \texttt{A[0]} & 100 & 20 \\
+    \hline  
+\end{tabular} \\
+
+Ispis: \texttt{100 20}\\
+
+
+\noindent \underline{Mehanizam razmjene imena}
+\begin{itemize}
+    \item U opisniku pozvane procedure ostavljaju se prazna mjesta koja se potom koriste za računanje adresa aktualnih parametara
+    \item Pozivajuća procedura izračuna adrese aktualnih parametara, zapiše ih u opisnik pozvane procedure koja iznova računa adresu aktualnog parametra za svaki dohvat vrijednosti
+\end{itemize}
+
+\begin{tabular}{|c|c|c|c|}
+    \hline
+    \texttt{x} & \texttt{a} &  \texttt{A[0]} &  \texttt{A[1]}\\
+    \hline
+    0 & \texttt{A[x]} & 10 & 20 \\
+    \hline
+    1 & \texttt{A[1]} & 10 & 100 \\
+    \hline  
+\end{tabular}\\
+
+Ispis: \texttt{10 100}
+\end{solution}
+
+\newpage
+
+\section{Generiranje međuk\^{o}da}
+
+\begin{problem}{245}
+    Navedite i kratko opišite linearne oblike međuk\^{o}da.
+\end{problem}
+
+\begin{solution}
+    \noindent Međuk\^{o}d linearnog oblika čine troadresne naredbe. Troadresne su naredbe zapis izravnatog sažetog sintaksnog stabla ili izravnog grafa bez petlji. Imamo:
+    \begin{itemize}
+        \item \textit{Troadresne naredbe ostvarene četvorkama} - koriste četiri polja: polje operatora, dva polja operanda i polje rezultata 
+
+        \item \textit{Troadresne naredbe ostvarene trojkama} - koriste se tri polja: polje operatora i dva polja operanda
+
+        \item \textit{Troadresne naredbe ostvarene neizravnim združenim trojkama} - združivanjem istovjetnih trojki i korištenjem vektora izvođenja učinkovitije se koristi memorijski prostor
+    \end{itemize}
+\end{solution}
+
+\begin{problem}{246}
+    Navedite osnovne razine međuk\^{o}da i objasnite namjenu svake razine. 
+\end{problem}
+
+\begin{solution}
+    \noindent \textit{Međuk\^{o}dom više razine} započinje sinteza ciljnog programa. U međuk\^{o}du više razine ostaju sačuvane strukture petlji i indeksa polja izvornog programa. Međuk\^{o}d više razine pogodan je za analizu tijeka izvođenja programa, analizu toka podataka, analizu zavisnosti podataka i analizu pseudonima. Međuk\^{o}d više razine najčešće je grafičkog oblika (sažeto sintaksno stablo, izravni graf bez petlji, graf zavisnosti programa). 
+
+    \noindent \textit{Međuk\^{o}d srednje razine} čine pojednostavljene naredbe izvornog jezika koje sliče strojnim naredbama, simbolička imena indentifikatora izvornog programa i simbolička imena privremenih varijabli. Postupci optimiranja izvođenja procedura, tijeka izvođenja programa, redoslijeda izvođenja naredbi i računanja izraza koriste međuk\^{o}d srednje razine. 
+
+    \noindent \textit{Međuk\^{o}d niže razine} čine naredbe slične naredbama strojnog jezika. Većina naredbi međuk\^{o}da niže razine prevodi se u jednu strojnu naredbu. Ako je naredbu međuk\^{o}da niže razine moguće prevesti na više različitih načina, tijekom generiranja i optimiranja ciljnog programa izabire se najpovoljniji način. Naredbe međuk\^{o}da niže razine ne koriste simbolička imena identifikatora (vrijednosti se dohvaćaju primjenom registara ili adresa memorijskih ćelija). Međuk\^{o}d niže razine pogodan je za razne postupke strojno zavisnog optimiranja. 
+\end{solution}
+
+\begin{problem}{247}
+    Objasnite graf zavisnosti. 
+\end{problem}
+
+\begin{solution}
+    \noindent Graf zavisnosti oblik je međuk\^{o}da prilagođen postupcima optimiranja. Čine ga dva grafa, graf zavisnosti upravljačkog tijeka i graf zavisnosti podataka. Graf zavisnosti upravljačkog tijeka sadrži podatke o zavisnosti izvođenja naredbi. Četiri su vrste zavisnosti podataka: unaprijedna zavisnost $f$, unazadna zavisnost $a$, zavisnost odredišta $o$ i zavisnost izvorišta $i$.
+\end{solution}
+
+\begin{problem}{249}
+    Navedite tri oblika međuk\^{o}da te objasnite općeniti izgled međuk\^{o}da svakog oblika.
+\end{problem}
+
+\begin{solution}
+    \noindent \textit{Grafički oblici međuk\^{o}da} su sažeto sintaksno stablo i izravni graf bez petlji. Listovi su sažetog sintaksnog stabla operandi, a unutrašnji su čvorovi operatori i ključne riječi. Kod izravnog grafa prije definiranja novog čvora provjerava se skup prethodno definiranih čvorova. Ako je čvor prethodno definiran, u graf se dodaje samo grana na postojeći čvor. 
+
+    \noindent \textit{Postfiksni sustav oznaka} (postfiksni oblici međuk\^{o}da) nastaje obilaskom čvorova sažetog sintaksnog stabla po dubini. Potpuno izravnavanje postiže se spremanjem operanada i operacija na postisni stog. 
+
+    \noindent \textit{Međuk\^{o}d linearnog oblika} čine troadresne naredbe. 
+\end{solution}
+
+
+\begin{problem}{257}
+    Navedite tri oblika međuk\^{o}da.
+\end{problem}
+
+\begin{solution}
+    \noindent Po svom se obliku međuk\^{o}d dijeli na grafički, postfiksni i linearni. 
+\end{solution}
+
+\begin{problem}{261}
+    Izgradite atributnu prijevodnu gramatiku koja generira troadresne naredbe za računanje logičkih izraza koji sadrže operator $\land$, $\lor$ i $\lnot$.
+\end{problem}
+
+\begin{solution}
+    $S_{kod} \xrightarrow[]{} E_{ime1, \, kod1}$   \hfill \{kod $=$ kod1\}
+
+    $E_{ime1, \, kod1} \xrightarrow[]{} \lnot \, E_{ime2, \, kod2}$ \hfill \{ime1 $=$ NovoIme(); kod1 = Generiraj(kod2 || ime1 "$:=$ not" ime2\}
+    
+    $E_{ime1, \, kod1} \xrightarrow[]{} E_{ime2, \, kod2} \, \land \, E_{ime3, \, kod3}$ 
+    
+    \hfill \{ime1 $=$ NovoIme();  kod1 $=$ Generiraj(kod2  ||  kod3 ||  ime1 "$:=$" ime2 "and"  ime3)\}
+
+    $E_{ime1, \, kod1} \xrightarrow[]{} E_{ime2, \, kod2} \, \lor \, E_{ime3, \, kod3}$
+
+    \hfill \{ime1 $=$ NovoIme();  kod1 $=$ Generiraj(kod2  ||  kod3 ||  ime1 "$:=$" ime2 "or"  ime3)\}
+
+    $E_{ime1, \, kod1} \xrightarrow[]{} T_{ime2}$ \hfill \{ime1 $=$ 1; kod $=$ Generiraj("");\}
+
+    $E_{ime1, \, kod1} \xrightarrow[]{} F_{ime2}$ \hfill \{ime1 $=$ 0; kod $=$ Generiraj("");\}
+\end{solution}
+
+\newpage
+
+\section{Generiranje ciljnog programa}
+
+\begin{problem}{263}
+     Objasnite generiranje ciljnog programa na temelju postfiksnog sustava oznaka. 
+\end{problem}
+
+\begin{solution}
+    \noindent Ako je međuk\^{o}d zapisan primjenom postfiksnog sustava oznaka, onda se osim generiranja naredbi ciljnosg programa izravnava sintaksno stablo primjenom potisnog stoga. Na temelju naredbe izvornog programa generira se niz znakova postfiksnog sustava. Generator ciljnog programa čita znakove slijedno s lijeva na desno i primjenjuje jednu od akcija: 
+    \begin{enumerate}
+        \item Stavi pročitani znak međuk\^{o}da na vrh stoga i pomakni glavu za čitanje na sljedeći znak. 
+        \item Uzmi s vrha stoga zadnji broj operanda, generiraj naredbe ciljnog programa i stavi rezultirajući operand na vrh stoga. 
+    \end{enumerate}
+\end{solution}
+
+\begin{problem}{264}
+    Opišite postupak izrade adresa naredbama.
+\end{problem}
+
+\begin{solution}
+    \noindent Generator ciljnog programa izrađuje memorijske adrese naredbama ciljnog programa. Adrese naredbi računaju se primjenom brojača. Veličina brojača povećava se za veličinu generirane naredbe izražene u oktetima. postupak izrade adresa naredbi koje upravljaju tijekom izvođenja programa koristi dvije liste: 
+    \begin{itemize}
+        \item Lista unazadnih adresa: čine ju zapisi simboličkih programskih oznaka i memorijskih adresa naredbi kojima su te oznake dodijeljene 
+        \item Lista unaprijednih adresa: čine ju zapisi programskih oznaka i kazaljke koje pokazuju na generirane naredbe što koriste koriste te oznake 
+    \end{itemize}
+\end{solution}
+
+\begin{problem}{265}
+    Općenito definirajte ulaze i izlaze iz programa semantičkog analizatora i generatora ciljnog programa ako su oba programa ostvareni kao zasebni prolazi jezičnog procesora.
+\end{problem}
+
+\begin{solution}
+    \begin{itemize}
+        \item Generator ciljnog programa: ulaz sintaksno stablo, izlaz generirani program
+        \item Semantički analizator: ulaz sintaksno stablo, izlaz podatci potrebni za generiranje atributnog sintaksnog stabla / niza naredbi stogovnog stroja / niza slijednih naredbi
+    \end{itemize}
+\end{solution}
+
+\begin{problem}{266}
+    Opišite Chaitinov heuristički postupak za bojanje grafa zavisnosti simboličkih i stvarnih registara.
+\end{problem}
+
+\begin{solution}
+    \noindent U grafu zavisnosti odredi se čvor koji ima manji broj susjeda od broja boja $R$ ($R$ ukupan broj boja za bojanje grafa). Izabrani čvor i sve njegove grane izuzmu se iz grafa zavisnosti. Na stog se spremi izuzeti čvor zajedno s listom svojih susjeda. Postupak izuzimanja čvorova nastavlja se izmijenjenim grafom koji ima jedan čvor manje. Ako se izuzmu svi čvorovi, onoda je moguće obojati graf s $R$ boja, inače u grafu zavisnosti ostaju čvorovi s $R$ ili više susjeda. Na temelju izabrane funkcije odlučivanja izabere se jedan od simboličkih registara, a njegova vrijednost spremi se u memoriju. Promijeni se ciljni program tako da se varijabli koja je spremljena u izabranom registru pristupa izravno u memoriji. Iz grafa zavisnosti izuzme se čvor pridružen tom simboličkom registru i sve njegove grane. Postupak bojanja grafa nastavlja se s izmijenjenim grafom koji ima jedan čvor manje. 
+\end{solution}
+
+\begin{problem}{267}
+    Opišite algoritam generiranja ciljnog programa na osnovi troadresnih naredbi.
+\end{problem}
+
+\begin{solution}
+    \begin{enumerate}
+        \item Odredi mjesto $M$ zapisa rezultata $R$. Prednost se daje registrima, no nije li moguće spremiti u registar, sprema se u memoriju.
+        \item U opisniku podataka pronađi sva mjesta $p$ gdje je spremljena vrijednost varijable $P$. Prednost se daje registrima. Ako je mjesto $p$ različito od mjesta zapisa rezultata $M$ izabranog u koraku (1), onda se genetrira naredba \texttt{MOVE p, M}. 
+        \item U opisniku podataka pronađi sva mjesta $d$ gdje je spremljena vrijednost varijable $D$. Prednost se daje registrima. Generira se naredba: OP d, M. U opisnik podataka zapiše se da
+        je varijabla $R$ spremljena na mjestu $M$. Ako je $M$ registar, onda se u opisnik registara zapiše
+        da registar $M$ sadrži vrijednost varijable $R$. U opisnike se zapiše da ostala mjesta ne sadrže
+        vrijednost varijable $R$ jer je naredba \texttt{R := P op D} promijenila njenu vrijednost.
+        \item Ako se nakon izvedene naredbe\texttt{R := P op D} vrijednosti varijabli $P$ i $D$ ne koriste u nastavku
+        programa i ako su njihove vrijednosti u registrima, onda se u zapisnike zapiše da registri
+        više ne sadrže vrijednosti tih varijabli.
+    \end{enumerate}
+\end{solution}
+
+\begin{problem}{268}
+    Navedite elemente strukture generatora ciljnog programa.
+\end{problem}
+
+\begin{solution}
+    \noindent Generator ciljnog programa definira se ulazom i izlazom, a čine ga postupci izrade adrese, izbora naredbe, izbora redoslijeda izvođenja naredbi i dodjele registara podacima. 
+\end{solution}
+
+\begin{problem}{269}
+     Objasnite kako se dobiva i boji graf zavisnosti simboličkih i stvarnih registara te kako se dodjeljuju stvarni registri. 
+\end{problem}
+
+\begin{solution}
+    \begin{enumerate}
+        \item Odrede se mrežice (unije \textit{du}-lanaca iste varijable koje imaju zajedničkih varijabli)
+        \item Mrežicama se dodijele simbolički registri (opće su namjene, neograničene veličine, omogućuju spremanje bilo kojeg tipa podatka, ima ih beskonačno mnogo)
+        \item Gradi se graf zavisnosti simboličkih i stvarnih registara
+        \item Ako generator raspolaže s $R$ stvarnih registara procesora, onda se čvorovi grafa zavisnosti boje s $R$ različitih boja, tako da dva susjedna čvora nisu obojana istom bojom
+        \item Stvarni registar dodijeli se onim simboličkim registrima koji su obojani istom bojom
+    \end{enumerate}
+\end{solution}
+
+\newpage
+
+\section{Priprema izvođenja ciljnog programa}
+
+\begin{problem}{279}
+     Navedite razradbu jezičnih procesora s obzirom na stupanj pripremljenosti ciljnog programa za izvođenje.
+\end{problem}
+
+\begin{solution}
+    \noindent Ovisno o stupnju pripremljenosti ciljnog programa za izvođenje, jezični se procesori dijele na:
+    \begin{itemize}
+        \item \textit{Spremi-i-pokreni jezični procesori}
+        \item \textit{Generatori izvodivog ciljnog programa}
+        \item \textit{Generatori premjestivog ciljnog programa}
+        \item \textit{Generatori zasebnih dijelova programa}
+    \end{itemize}
+\end{solution}
+
+\newpage
+
+\section{Optimiranje}
+
+\begin{problem}{280}
+     Opišite što se nastoji utvrditi analizom toka podataka.
+\end{problem}
+
+\begin{solution}
+    \noindent Analiza toka podataka izravni je nastavak analize tijeka izvođenja programa. Na temelju grafa tijeka izvođenja programa analizira se način uporabe podataka u programu primjenom iterativnog ili eliminacijskog postupka. 
+\end{solution}
+
+\begin{problem}{281}
+    Objasnite razliku između strojno nezavisnog i strojno zavisnog optimiranja.
+\end{problem}
+
+\begin{solution}
+    \noindent \textit{Strojno nezavisni postupci} optimiraju programske strukture bliske strukturama višeg programskog jezika (programske petlje, složene naredbe grananja, procedure, pristup složenim apstraktnim tipovima podataka...). \textit{Strojno zavisni postupci} optimiraju programske strukture bliske strukturama strojnog jezika. 
+\end{solution}
+
+\begin{problem}{282}
+    Nabrojite komponente koje čine analizu izvođenja programa.
+\end{problem}
+
+\begin{solution}
+    \noindent Analizu izvođenja programa čine analiza tijeka izvođenja programa, analiza toka podataka, analiza zavisnosti podataka i analiza pseudonima. 
+\end{solution}
+
+\begin{problem}{283}
+    Opišite postupak optimiranja petlji kod međukôda niže razine i ciljnog programa. 
+\end{problem}
+
+\begin{solution}
+    \noindent Optimiranje petlji obuhvaća više različitih preinaka:
+    \begin{itemize}
+        \item Izuzimanje praznih petlji
+        \item Invertiranje =  postupak zamjene naredbe uvjetnog i bezuvjetnog grananja samo jednom naredbom grananja na kraju petlje 
+        \item Izravnavanje = izuzimanje naredbi grananja i ponavljanje naredbi njezinog tijela onoliko puta koliko se puta izvodi petlja
+    \end{itemize}
+\end{solution}
+
+\begin{problem}{284}
+     Opišite analizu tijeka izvođenja programa.
+\end{problem}
+
+\begin{solution}
+    \noindent Analiza tijeka izvođenja programa ispituje upravljačku strukturu međukôda definiranu naredbama petlji, grananja itd. Dva su osnovna pristupa analizi tijeka izvođenja programa: analiza dominacije i analiza strukture. Obje analize grade graf tijeka izvođenja. Analiza dominacije određuje strukturu programskih petlji. Analiza strukture gradi upravljačko stablo na temelju raščlambe grafa tijeka izvođenja programa. 
+\end{solution}
+
+\begin{problem}{285}
+    Nabrojite i kratko opišite postupke optimiranja međukôda srednje razine. 
+\end{problem}
+
+\begin{solution}
+    \noindent Budući da međukôd srednje razine čine pojednostavljene naredbe izvornog jezika koje sliče strojnim naredbama, moguće ga je optimirati primjenom različitih postupaka: 
+    \begin{itemize}
+        \item Optimiranje procedura = pretvorba rekurzivnih poziva procedura u petlje i uvišestručavanje procedura
+        \item Optimiranje petlji = ovim se postupkom optimira provjera granica indeksa polja i uporaba spregnutih varijabli (vrijednost varijable tijekom izvođenja petlje postupno se smanjuje ili povećava za neku konstantnu vrijednost)
+        \item Optimiranje izraza =  unaprijedno računanje izraza konstantne vrijednosti, izlučivanje izraza izvan petlje, izuzimanje istovjetnih izraza i mrtvih izraza, razlaganje i pojednostavljenje izraza, ...
+    \end{itemize}
+\end{solution}
+
+\newpage
+
+\section{Ispitni zadaci - MI}
+
+\begin{problem}{2022}
+    Ako imamo $X_{n_5, i_1, i_2} \xrightarrow[]{} Y_{n_6} \, Z_{i_3} \, V_{i_4, n_7, n_8} \, W_{n_9}$, $n_7$ može se izračunati na temelju čega? $i_1, i_2, i_3 $ i $i_4$ su izvedena svojstva, $n_5, n_6, n_7, n_8$ i $n_9$ su nasljedna svojstva.
+\end{problem}
+
+\begin{solution}
+    \noindent iz primjera 4.3 imamo:
+    $$X_{n_1, i_1, i_2} \xrightarrow[]{} Y_{n_4} \, Z_{i_5} \, V_{i_6, n_7, n_8} \, W_{n_9}$$
+    $n_4 = f(n_1)$ \hfill $n_7, n_8 = f(n_1, n_4, i_5)$  \hfill $n_9 = f(n_1, n_4, n_7, n_8, i_5, i_6)$ \hfill $i_1, i_2 = f(n_1, n_4, n_7, n_8, n_9, i_5, i_6)$\\
+    pa je rješenje: $n_7 = f(n_5, n_6, i_3)$
+\end{solution}
+
+\begin{problem}{2015}
+   Za slijedeću kontektsno neovisnu gramatiku\\
+   $S \xrightarrow[]{} aABc \, |\, cBAb$\\
+   $A \xrightarrow[]{} aA \, | \, \varepsilon$ \\
+   $B \xrightarrow[]{} bB \, | \,c $ \\
+   izračunajte vrijednost relacije \textit{ReduciranZnakom} za završni znak $c$.
+\end{problem}
+
+\begin{solution}
+    \noindent SLIJEDI($S$) = $\{\bot\}$, SLIJEDI($B$) = $\{a, b, c\}$\\
+    imamo relacije \textit{ReduciranZnakom}($c, a$), \textit{ReduciranZnakom}($c, b$), \textit{ReduciranZnakom}($c, c$),\\ \textit{ReduciranZnakom}($c, \bot$)
+\end{solution}
+
+\begin{problem}{2015}
+    Za slijedeću kontekstno neovisnu gramatiku\\
+    $S \xrightarrow[]{} pAmC$ \hfill $S \xrightarrow[]{} bA$ \hfill $A \xrightarrow[]{} dSa$ \hfill $C \xrightarrow[]{} dA$ \hfill  $A \xrightarrow[]{} e$ \\
+    izračunajte vrijednost relacije \textit{IspodZnaka} za završni znak $p$.
+\end{problem}
+
+\begin{solution}
+    \noindent imamo relacije \textit{IspodZnaka}($p, d$) i \textit{IspodZnaka}($p, e$) 
+\end{solution}
+
+\begin{problem}{2017}
+    Na raspolaganju nam je $n$ viših programskih jezika $L_1, \dots, L_n$, računalo čiji je strojni jezik označen sa $b$ te jezični procesor $\mathrm{JP}^{L_1 \xrightarrow[]{} b}_b$ koji na tom računalu prevodi $L_1$ u $b$. Na istom računalu želimo imati sve prevoditelje viših jezika iz jednog u drugi, tj. sve $\mathrm{JP}^{L_i \xrightarrow[]{} L_j}_b$ za
+    $i, j \in \{1, \dots, n\}, i \neq j$. Odredite minimalni broj procesora oblika $\mathrm{JP}^{L_i \xrightarrow[]{} L_j}_{L_k}$ koje je potrebno napisati u višim jezicima tako da se njihovom primjenom (nadovezivanjem, prevođenjem) mogu izgraditi svi traženi procesori. (Želimo imati mogućnost prevođenja $L_i \xrightarrow[]{} L_j$, a ne sve moguće procesore. Dakle, minimalan broj procesora kako bi njihovom kombinacijom mogli ostvariti sva spomenuta prevođenja.)
+\end{problem}
+
+\begin{solution}
+    \noindent Minimalan je broj procesora $n$. To su procesori oblika $$L_1 \xrightarrow[]{} L_2 \; - \; L_2 \xrightarrow[]{} L_3 \; - \; \cdots \; - \; L_{n-1} \xrightarrow[]{} L_n \; - \; L_n \xrightarrow[]{} L_1$$ Jezik izgradnje jezik je $L_1$ (prevođenjem procesorom $\mathrm{JP}^{L_1 \xrightarrow[]{} b}_b$ prevodimo jezik izgradnje u jezik $b$).
+\end{solution}
+
+\begin{problem}{2013}
+    Za jezik $D$ implementirali smo samoprevoditelj koji prevodi u izvršivi jezik $x$. Želimo dobiti izvodivu inačicu prevoditelja iz jezika $D$ u jezik $x$, a na raspolaganju uz navedeni samoprevoditelj imamo sljedeće jezične procesore: $\mathrm{JP}^{A \xrightarrow[]{}C }_D$, $\mathrm{JP}^{C \xrightarrow[]{} A}_y$, $\mathrm{JP}^{C\xrightarrow[]{}y}_y$, $\mathrm{JP}^{C\xrightarrow[]{}B}_x$, $\mathrm{JP}^{B\xrightarrow[]{}D}_A$, $\mathrm{JP}^{D\xrightarrow[]{}C}_C$, $\mathrm{JP}^{B\xrightarrow[]{}z}_x$. Izvodivi su jezici $x$, $y$ i $z$. Prikažite neki najkraći postupak kojim možemo ostvariti zadani cilj. 
+\end{problem}
+
+\begin{solution}
+    \noindent Dodatno imamo prevoditelj $\mathrm{JP}^{D\xrightarrow[]{}x}_D$. Najkraći je postupak :
+    $$\mathrm{JP}^{D\xrightarrow[]{}x}_D \xrightarrow[]{\mathrm{JP}^{D\xrightarrow[]{}C}_D} \mathrm{JP}^{D \xrightarrow[]{}x}_C \xrightarrow[]{\mathrm{JP}^{C \xrightarrow[]{}y}_y} \mathrm{JP}^{D \xrightarrow[]{} x}_y$$
+\end{solution}
+
+\begin{problem}{Teorijska pitanja}
+    Ovo je neka teorija koja je bitna u zadacima.
+\end{problem}
+
+\begin{solution}
+\onehalfspacing
+    \begin{itemize}
+        \item $LR$ stavka produkcija je gramatike koja ima oznaku točke na proizvoljnom mjestu svoje desne strane uključujući krajnje lijevo i krajnje desno mjesto. U slučaju $\varepsilon$-produkcije, $A \xrightarrow[]{} \varepsilon$, $LR$-stavka je $A \xrightarrow[]{}$ \textbullet.
+        \item PRIMIJENI($A \xrightarrow[]{} \alpha$) = ZAPOČINJE($\alpha$) $\cup$ SLIJEDI($A$), ako je $A \xrightarrow[]{} \alpha$ prazna produkcija, inače PRIMIJENI($A \xrightarrow[]{} \alpha$) = ZAPOČINJE($\alpha$)
+        \item Relacija \textit{ReduciranZnakom}($A,x$) vrijedi ako je znak $A$ početni nezavršni znak gramatike, a znak $x$ oznaka kraja niza, $\bot$ 
+        \item Kontekstno neovisna gramatika jest \uwave{operatorska} ako i samo ako produkcije nisu $\varepsilon$-produkcije i ni na jednom mjestu desne strane produkcije dva susjedna znaka nisu nezavršna.
+        \item Ako je $M$ broj različitih operatora u programu, a $N$ broj naredbi, veličina Co–No tablice je $M^2$ (broj redaka jednak je broju stupaca jednak je broju operatora)
+        \item \uwave{Ulazna/izlazna gramatika} dio je prijevodne gramatike koja uključuje samo ulazne/izlazne završne znakove $G_{\mathrm{ulazna/izlazna}} = (V, T_{\mathrm{ulazni/izlazni}}, P, S)$
+        \item Početna vrijednost nasljednog svojstva početnog nezavršnog znaka definirana je unaprijed zajedno s produkcijama gramatike.
+        \item Ako je parametar potprograma varijabla koja je pridružena nasljednom svojstvu, onda se razmjenjuje \textit{vrijednost} varijable. Ako je parametar potprograma varijabla koja je pridružena izvedenom svojstvu, onda se razmjenjuje \textit{adresa} varijable. 
+        \item Redoslijed zapisa znakova u tablici uniformnih znakova odgovara redoslijedu leksičkih jedinki u izvornom programu.
+        \item Interpretatori: redoslijed prevođenja određen je redoslijedom izvođenja
+       % \item \textit{Izvedena} svojstva $\xrightarrow[]{}$ vrijednosti svojstava računaju se i prenose od dna sintaksnog stabla prema vrhu
+        %\item Parser \textit{Pomakni-Reduciraj} koristi upravljačke tablice \textit{Pomakni/Reduciraj} i \textit{Stavi} 
+    \end{itemize}
+\end{solution}
+
+\newpage
+
+\section{Ispitni zadaci - ZI}
+
+\begin{problem}{Teorijska pitanja}
+    Ovo je neka teorija koja je bitna u zadacima.
+\end{problem}
+
+\begin{solution}
+\onehalfspacing
+    \begin{itemize}
+        \item Analizu izvođenja programa čini poredani slijed niza:
+            \begin{enumerate}
+                \item analiza tijeka izvođenja programa
+                \item analiza toka podataka
+                \item analiza zavisnosti podataka
+                \item analiza pseudonima 
+                \item postupci pretvorbe
+            \end{enumerate}
+
+        \item Početna konfiguracija potisnog automata parsera od vrha prema dnu za zadanu $L$-atributnu \\ prijevodnu gramatiku:
+            \begin{itemize}
+                \item početni nezavršni znak gramatike
+                \item početne vrijednosti nasljednih svojstava početnog nezavršnog znaka
+                \item kazaljke koje pokazuju na mjesto zapisa vrijednosti izvedenih svojstava početnog nezavršnog znaka
+                \item ostatak stoga
+            \end{itemize}
+        \item Statička provjera vrijednosti obilježja izvodi se tijekom semantičke analize. 
+        \item Ako je zadana troadresna naredba \texttt{Oznaka5: a := a + 1}, onda se \texttt{Oznaka5} zapiše u listu \\ \textit{unazadnih adresa}.
+        \item Za premjestivi ciljni program nisu u potpunosti izrađene adrese podataka i naredbi.
+        \item Učinkovita uporaba \underline{naredbenog cjevovoda} zahtjeva grupiranje nezavisnih naredbi.
+        \item Oblici međukôda:
+            \begin{itemize}
+                \item sažeto sintaksno stablo
+                \item izravni graf bez petlji
+                \item postfiksni sustav oznaka
+                \item troadresne naredbe
+                \item statičko jednostruko pridruživanje
+                \item graf zavisnosti
+            \end{itemize}
+        \item U grafu tijeka izvođenja programa, ako se čvor $a$ nalazi na svakom putu od početnog čvora do čvora $b$, onda je čvor $a$ dominator čvora $b$.
+        \item Ako je u stablu dominacije čvor $a$ roditelj (neposredni prethodnik) čvora $b$, onda je u grafu tijeka izvođenja program čvor $a$ neposredni dominator čvora b.
+        \item U metodi rekurzivnog spusta za $L$-atributnu prijevodnu gramatiku, znakovima gramatike pridružuju se potprogrami, a svojstvima znakova pridružuju se programske varijable. 
+        \item Prostorno bliskim pristupima podacima osiguran je unaprijedni dohvat podataka u priručnu memoriju. 
+        \item Pri traženju slobodnog segmenta memorijskog prostora, pretpostavimo da nijedan slobodni segment pojedinačno nije dovoljno velik za traženu memoriju. U tom se slučaju najprije pokušava provesti postupak združivanja susjednih slobodnih segmenata. 
+
+        \item Dva su osnovna načina traženja slobodnog segmenta memorijskog prostora: potraga za prvim slobodnim segmentom dovoljne veličine i potraga za slobodnim segmentom koji je po svojoj veličini veći, ali najbliži veličini tražene memorije. 
+        
+        \item Generiranje ciljnog programa na temelju postfiksnog sustava oznaka: Ako se u međukôdu pročita operator, onda generator primijeni akciju: uzmi s vrha stoga zadani broj operanada, generiraj naredbe ciljnog programa i stavi rezultirajući operand na vrh stoga.
+
+        \item U metodi rekurzivnog spusta za $L$-atributnu prijevodnu gramatiku, ako je varijabli pridruženo nasljedno svojstvo, razmjenjuje se njezina vrijednost, a ako je varijabli pridruženo izvedeno svojstvo, razmjenjuje se njezina adresa.
+        \item Optimiranje zamjenom naredbe poziva procedure naredbama njezinog tijela u pravilu smanjuje vrijeme izvođenja i povećava veličinu ciljnog programa.
+
+        \item  Pri izgradnji potisnog automata za atributnu prijevodnu gramatiku, temeljem produkcije \\ $A \xrightarrow[]{} \xi b \phi \alpha$, pri čemu su $\xi$ i $\phi$ izlazni znakovi gradi se akcija \textit{Izlaz}($\xi, \phi$); \textit{Zamijeni}($\alpha^r$); \textit{Pomakni};
+        \item Izvođenje naredbi za koje vrijedi da se vrijednost relacije okoline ne mijenja određuje životni vijek pridruživanja imena. 
+        \item Analizu pseudonima čine dva dijela - \textit{skupljač pseudonima} i \textit{prenositelj pseudonima}.
+        \item Strojno nezavisni program virtualnog stroja u strojni program prevodi jezični \textit{postprocesor}.
+        \item Opisnik procedure čine:
+         \begin{enumerate}
+             \item Vrijednosti ulaznih parametara procedure
+             \item Upravljačka kazaljka (uvijek pokazuje na pozivajuću proceduru)
+             \item Kazaljka nelokalnih imena
+             \item Lokalni podaci
+         \end{enumerate}
+        \item Za podjelu jezičnih procesora s obzirom na stupanj pripremljenosti ciljnog programa za izvođenje vidi zadatak 279.
+        \item Generator ciljnog programa čine:
+            \begin{enumerate}
+                \item Postupci izrade adrese (podacima i naredbama)
+                \item Izbor naredbe
+                \item Izbor redoslijeda izvođenja naredbi 
+                \item Dodjela registara podacima
+            \end{enumerate}
+        \item Stablo dominacije gradi se na temelju grafa tijeka izvođenja. 
+        \item Dinamička provjera vrijednosti obilježja izvodi se tijekom izvođenja ciljnog programa. 
+        \item Generator ciljnog programa koristi listu unaprijednih adresa i listu unazadnih adresa. 
+        \item Za premjestivi ciljni program vrijedi:
+            \begin{itemize}
+                \item čine ga strojne naredbe zapisane nizom nula i jedinica
+                \item adrese podataka i naredbi nisu u potpunosti izrađene
+                \item neizrađene su adrese relativni pomaci od nulte adrese 
+                \item vrijednosti adresa određuju se tijekom punjenja radne memorije
+                \item postupak dorade adresa izvodi \textit{program punitelj}
+                \item \textit{program povezivač} povezuje zasebno prevedene procedure
+            \end{itemize}
+        \item  Prilikom generiranja ciljnog programa na temelju postfiksnog sustava oznaka, izravnavanje sintaksnog stabla ostvaruje se primjenom potisnog stoga.
+        \item Dio opisnika procedure po kojem se razlikuju statičko i dinamičko pravilo djelokruga jest kazaljka nelokalnih imena. 
+
+        \item Tijekom analize struktura pri analizi tijeka izvođenja programa, analiza strukture obilazi graf tijeka izvođenja programa, traži podgrafove uzorke, zamijeni ih jednim zamjenskim čvorom i gradi \textit{upravljačko stablo}.
+
+        \item Gradimo atributnu prijevodnu gramatiku koja generira troadresne naredbe za računanje logičkih izraza. Produkciju $E_{ime1,\,kod1} \xrightarrow[]{} \neg E_{ime2, \,kod2}$ ima smisla proširiti sljedećim akcijskim znakovima:  \{ime1 = NovoIme(); kod1 = Generiraj(kod2 || ime1 ":= not" ime2\}
+
+        \item  U analizi dominacije koju provodimo nad grafom tijeka izvođenja programa, $\mathrm{dom}(x)$ označava skup dominatora čvora $x$. Čvor $d$ neposredni je dominator čvora $a$ ako i samo ako za svaki drugi čvor $c$ ($c \neq a$, $c \neq d$) vrijedi: $c \notin \mathrm{dom}(a)$ ili $d \notin \mathrm{dom}(c)$. \\
+        Ovaj se izraz dobije negacijom sljedećeg izraza:
+        Čvor $d$ neposredni je dominator čvora $a$ ako i samo ako ni za jedan drugi čvor $c$ ($c \neq a$, $c \neq d$) ne vrijedi : $c \in \mathrm{dom}(a)$ i $d \in \mathrm{dom}(c)$. 
+
+        \item Četiri vrste zavisnosti podataka:
+            \begin{enumerate}
+                \item Unaprijedna zavisnost $f$ - ranija naredba mijenja/definira varijablu koju koristi kasnija naredba
+                \item Unazadna zavisnost $a$ - ranija naredba koristi varijablu koja se u kasnijem trenutku mijenja tj. ponovno definira
+                \item Zavisnost odredišta $o$ - obje naredbe mijenjaju istu varijablu (ista varijabla je s lijeve strane jednakosti)
+                \item Zavisnost izvorišta $i$ - obje naredbe koriste istu varijablu (imaju istu varijablu na desnoj strani jednakosti)
+            \end{enumerate}
+        \item Parser \textit{Pomakni-Reduciraj} koristi tablice \textit{Pomakni/Reduciraj} i \textit{Stavi}.
+        \item Dio izvornog programa u kojem je važeća deklaracija naziva se djelokrug deklaracije.
+        \item Tri osnovne razine međukôda su međukôd više, niže i srednje razine.
+        \item \textit{Pomakni-Pronađi} parser gradi se izravno na temelju relacija \textit{IspodZnaka} i \textit{ReduciranZnakom}.
+        \item $LR$ parser ima tablice $Akcija$ čiji su stupci označeni nezavršnim znakovima (i oznakom kraja niza) i tablicu $NovoStanje$ čiji su stupci označeni nezavršnim znakovima gramatike. 
+
+    \end{itemize}
+\end{solution}
+
+\newpage
+
+\begin{problem}{ZI 2017}
+    Za programski odsječak odredite ispis ako se kod poziva potprograma koristi...
+    
+    \begin{lstlisting}
+    01      x = 0
+    02      A[2] = {10, 20}
+    03      P(a) {
+    04          x = 1
+    05          a = 100
+    06          print(A[0], A[1])
+    07          x = 0
+    08          a = 101
+    09      }
+    10      P(A[x])
+    11      print(x, A[0], A[1])
+    \end{lstlisting}
+\end{problem}
+
+\begin{solution}
+
+\begin{multicols}{2}
+    
+    \noindent a) razmjena vrijednosti\\
+
+    \noindent \begin{tabular}{|c|c|c|c|c|c|}
+         \hline
+         $n$ & \texttt{x} & \texttt{a} & \texttt{A[0]} & \texttt{A[1]} & ispis \\
+         \hline
+         10 & 0 & 10 & 10 & 20 & \\
+         \hline
+         04 & 1 & 10 & 10 & 20 & \\
+         \hline
+         05 & 1 & 100 & 10 & 20 & \\
+         \hline
+         06 & 1 & 100 & 10 & 20 & 10, 20\\
+         \hline
+         07 & 0 & 100 & 10 & 20 & \\
+         \hline
+         08 & 0 & 101 & 10 & 20 & \\
+         \hline
+         11 & 0 &  & 10 & 20 & 0, 10, 20\\
+         \hline
+    \end{tabular}\\ 
+
+    \vspace{0.5cm}
+
+    \noindent b) razmjena adresa\\
+
+    \noindent \begin{tabular}{|c|c|c|c|c|c|}
+         \hline
+         $n$ & \texttt{x} & \texttt{a} & \texttt{A[0]} & \texttt{A[1]} & ispis \\
+         \hline
+         10 & 0 & \texttt{A[0]} & 10 & 20 & \\
+         \hline
+         04 & 1 & \texttt{A[0]} & 10 & 20 & \\
+         \hline
+         05 & 1 & \texttt{A[0]} & 100 & 20 & \\
+         \hline
+         06 & 1 & \texttt{A[0]} & 100 & 20 &  100, 20 \\
+         \hline
+         07 & 0 & \texttt{A[0]} & 100 & 20 & \\
+         \hline
+         08 & 0 & \texttt{A[0]} & 101 & 20 & \\
+         \hline
+         11 & 0 &  & 101 & 20 & 0, 101, 20\\
+         \hline
+    \end{tabular}\\ 
+
+    \columnbreak
+
+    \noindent c) razmjena imena\\
+
+    \noindent \begin{tabular}{|c|c|c|c|c|c|}
+         \hline
+         $n$ & \texttt{x} & \texttt{a} & \texttt{A[0]} & \texttt{A[1]} & ispis \\
+         \hline
+         10 & 0 & \texttt{A[x]} & 10 & 20 & \\
+         \hline
+         04 & 1 & \texttt{A[x]} & 10 & 20 & \\
+         \hline
+         05 & 1 & \texttt{A[x]} & 10 & 100 & \\
+         \hline
+         06 & 1 & \texttt{A[x]} & 10 & 100 & 10, 100\\
+         \hline
+         07 & 0 & \texttt{A[x]} & 10 & 100 & \\
+         \hline
+         08 & 0 & \texttt{A[x]} & 101 & 100 & \\
+         \hline
+         11 & 0 &  & 101 & 100 & 0, 101, 100\\
+         \hline
+    \end{tabular}\\ 
+
+     \vspace{0.5cm}
+
+    \noindent d) povratna razmjena vrijednosti\\
+
+    \noindent \begin{tabular}{|c|c|c|c|c|c|}
+         \hline
+         $n$ & \texttt{x} & \texttt{a} & \texttt{A[0]} & \texttt{A[1]} & ispis \\
+         \hline
+         10 & 0 & 10 & 10 & 20 & \\
+         \hline
+         04 & 1 & 10 & 10 & 20 & \\
+         \hline
+         05 & 1 & 100 & 10 & 20 & \\
+         \hline
+         06 & 1 & 100 & 10 & 20 &  10, 20 \\
+         \hline
+         07 & 0 & 100 & 10 & 20 & \\
+         \hline
+         08 & 0 & 101 & 101 & 20 & \\
+         \hline
+         11 & 0 &  & 101 & 20 & 0, 101, 20\\
+         \hline
+    \end{tabular}\\
+\end{multicols}
+\noindent U koraku 08 mehanizam povratne razmjene vrijednosti prepiše \texttt{a} u \texttt{A[x]}, a \texttt{x} = 0 (vrijednost se zapravo prepiše u \texttt{A[x]}, a gledamo vrijednost koju je \texttt{x} imao pri pozivu funkcije s tim parametrom).
+\end{solution}
+
+\begin{problem}{ZI 2018}
+    Za programski odsječak odredite ispis ako se kod poziva potprograma koristi...
+    
+    \begin{lstlisting}
+    01      i = 1
+    02      b[3] = {5, 6, 7}
+    03      f(x) {
+    04          i = 0
+    05          x = 8
+    06          print(b[0], b[1], b[2])
+    07          i = 2
+    08          x = 9
+    09      }
+    10      f(b[i])
+    11      print(i, b[0], b[1], b[2])
+    \end{lstlisting}
+\end{problem}
+
+\begin{solution}
+
+\begin{multicols}{2}
+    
+    \noindent a) razmjena vrijednosti\\
+
+    \noindent \begin{tabular}{|c|c|c|c|c|c|c|}
+         \hline
+         $n$ & \texttt{i} & \texttt{b[0]} & \texttt{b[1]} & \texttt{b[2]} & \texttt{x} & ispis \\
+         \hline
+         10 & 1 & 5 & 6 & 7 & 6 &\\
+         \hline
+         04 & 0 & 5 & 6 & 7 & 6 &\\
+         \hline
+         05 & 0 & 5 & 6 & 7 & 8 &\\
+         \hline
+         06 & 0 & 5 & 6 & 7 & 8 & 5, 6, 7\\
+         \hline
+         07 & 2 & 5 & 6 & 7 & 8 & \\
+         \hline
+         08 & 2 & 5 & 6 & 7 & 9 & \\
+         \hline
+         11 & 2 & 5 & 6 & 7 &  & 2, 5, 6, 7\\
+         \hline
+    \end{tabular}\\ 
+
+    \vspace{0.5cm}
+
+    \noindent b) razmjena adresa\\
+
+    \noindent \begin{tabular}{|c|c|c|c|c|c|c|}
+         \hline
+         $n$ & \texttt{i} & \texttt{b[0]} & \texttt{b[1]} & \texttt{b[2]} & \texttt{x} & ispis \\
+         \hline
+         10 & 1 & 5 & 6 & 7 & \texttt{b[1]} &\\
+         \hline
+         04 & 0 & 5 & 6 & 7 & \texttt{b[1]} &\\
+         \hline
+         05 & 0 & 5 & 8 & 7 & \texttt{b[1]} &\\
+         \hline
+         06 & 0 & 5 & 8 & 7 & \texttt{b[1]} & 5, 8, 7\\
+         \hline
+         07 & 2 & 5 & 8 & 7 & \texttt{b[1]} & \\
+         \hline
+         08 & 2 & 5 & 9 & 7 & \texttt{b[1]} & \\
+         \hline
+         11 & 2 & 5 & 9 & 7 &  & 2, 5, 9, 7\\
+         \hline
+    \end{tabular}\\ 
+
+    \columnbreak
+
+    \noindent c) razmjena imena\\
+
+    \noindent \begin{tabular}{|c|c|c|c|c|c|c|}
+         \hline
+         $n$ & \texttt{i} & \texttt{b[0]} & \texttt{b[1]} & \texttt{b[2]} & \texttt{x} & ispis \\
+         \hline
+         10 & 1 & 5 & 6 & 7 & \texttt{b[i]} &\\
+         \hline
+         04 & 0 & 5 & 6 & 7 & \texttt{b[i]} &\\
+         \hline
+         05 & 0 & 8 & 6 & 7 & \texttt{b[i]} &\\
+         \hline
+         06 & 0 & 8 & 8 & 7 & \texttt{b[i]} & 8, 6, 7\\
+         \hline
+         07 & 2 & 8 & 6 & 7 & \texttt{b[i]} & \\
+         \hline
+         08 & 2 & 8 & 6 & 9 & \texttt{b[i]} & \\
+         \hline
+         11 & 2 & 8 & 6 & 9 &  & 2, 8, 6, 9\\
+         \hline
+    \end{tabular}\\ 
+
+     \vspace{0.5cm}
+
+    \noindent d) povratna razmjena vrijednosti\\
+
+    \noindent \begin{tabular}{|c|c|c|c|c|c|c|}
+         \hline
+         $n$ & \texttt{i} & \texttt{b[0]} & \texttt{b[1]} & \texttt{b[2]} & \texttt{x} & ispis \\
+         \hline
+         10 & 1 & 5 & 6 & 7 & 6 &\\
+         \hline
+         04 & 0 & 5 & 6 & 7 & 6 &\\
+         \hline
+         05 & 0 & 5 & 6 & 7 & 8 &\\
+         \hline
+         06 & 0 & 5 & 6 & 7 & 8 & 5, 6, 7\\
+         \hline
+         07 & 2 & 5 & 6 & 7 & 8 & \\
+         \hline
+         08 & 2 & 5 & 6 & 7 & 9 & \\
+         \hline
+         11 & 2 & 5 & 9 & 7 &  & 2, 5, 9, 7\\
+         \hline
+    \end{tabular}\\
+\end{multicols}
+\noindent U koraku 08 mehanizam povratne razmjene vrijednosti prepiše \texttt{x} u \texttt{b[i]}, \texttt{i} = 1.
+\end{solution}
+
+\begin{problem}{2017}
+    Za zadanu atributnu prijevodnu gramatiku u pseudokodu sličnom jeziku C napišite parser metodom rekurzivnog spusta. Semantičke akcije $\{Zbroji\}_{r,\, w,\, z}$ i $\{Oduzmi\}_{r,\, w,\,z}$ primaju argumente $r$ i $w$ te rezultat operacije zapisuju u $z$.\\
+    $S_o \xrightarrow[]{} a \, A_p \, b\, c \, B_{q, \,r} \, \{Ispisi\}_w$ \hfill
+    $o \xleftarrow[]{} 2; \; p \xleftarrow[]{} o; \; w \xleftarrow[]{} q; \; r \xleftarrow[]{} o$ \\
+    $S_o \xleftarrow[]{} b \, A_p \, \{Zbroji\}_{r,\,w, \,z}$ \hfill
+    $o \xleftarrow[]{} 2; \; p \xleftarrow[]{} o; \; w  \xleftarrow[]{} o; \; r \xleftarrow[]{} o;$ \\
+    $A_o \xrightarrow[]{} c \, B_{p, \,q} \, \{Oduzmi\}_{r, \, w, \, z}$ \hfill
+    $r \xleftarrow[]{} o; \; q \xleftarrow[]{} o; \; w \xleftarrow[]{} p;$ \\
+    $B_{o, \,p} \xrightarrow[]{} a \, c$ \hfill $o \xleftarrow[]{} p + 2$
+\end{problem}
+
+\begin{solution}
+    \noindent Promjena imena svojstva koja su povezana naredbom preslikavanja:
+
+     $S_o \xrightarrow[]{} a \, A_o \, b\, c \, B_{q, \,o} \, \{Ispisi\}_q$ \hfill
+    $o \xleftarrow[]{} 2; $\\
+    \indent $S_o \xleftarrow[]{} b \, A_o \, \{Zbroji\}_{o,\, o, \,z}$ \hfill
+    $o \xleftarrow[]{} 2;$ \\
+    \indent $A_o \xrightarrow[]{} c \, B_{p, \,o} \, \{Oduzmi\}_{o, \, p, \, z}$ \\
+    \indent $B_{o, \,p} \xrightarrow[]{} a \, c$ \hfill $o \xleftarrow[]{} p + 2$ \\
+
+    \noindent Dodatna promjena imena svojstava nezavršnog znaka $B$:
+
+     $S_o \xrightarrow[]{} a \, A_o \, b\, c \, B_{q, \,o} \, \{Ispisi\}_q$ \hfill
+    $o \xleftarrow[]{} 2; $\\
+    \indent $S_o \xleftarrow[]{} b \, A_o \, \{Zbroji\}_{o,\, o, \,z}$ \hfill
+    $o \xleftarrow[]{} 2;$ \\
+    \indent $A_o \xrightarrow[]{} c \, B_{q, \,o} \, \{Oduzmi\}_{o, \, q, \, z}$ \\
+    \indent $B_{q, \,o} \xrightarrow[]{} a \, c$ \hfill $q \xleftarrow[]{} o + 2$ \\
+
+    \noindent Izrada parsera za preuređenu gramatiku: 
+
+\begin{lstlisting}
+    Glavni(){
+        Ulaz.znak = Krajnje lijevi znak niza w;
+        Ulaz.vrijednost = Vrijednost krajnje lijevog znaka niza w;
+
+        o = 2
+        S(o);
+
+        if (Ulaz.znak != znak_kraja_niza)
+            Odbaci();
+        else
+            Prihvati();
+    }
+\end{lstlisting}
+
+\newpage
+
+\begin{lstlisting}
+    S(o){
+        Nasljedno svojstvo o;
+        case (Ulaz.znak):
+            a:
+                {
+                    Lokalna varijabla q;
+                    Ulaz.znak = Krajnje lijevi znak niza w;
+                    Ulaz.vrijednost = Vrijednost krajnje lijevog znaka niza w;
+                    A(o);
+                    Ulaz.znak = Krajnje lijevi znak niza w;
+                    if (Ulaz.znak != b)
+                        Odbaci();
+                    else
+                        if (Ulaz.znak != c)
+                            Odbaci()
+                        else
+                            Ulaz.znak = Krajnje lijevi znak niza w;
+                            Ulaz.vrijednost = Vrijednost krajnje lijevog znaka niza w;
+                            B(&q, o)
+                            Ispisi(q);
+                }
+            b:
+                {
+                    Lokalna varijabla w;
+                    Ulaz.znak = Krajnje lijevi znak niza w;
+                    Ulaz.vrijednost = Vrijednost krajnje lijevog znaka niza w;
+                    A(o);
+                    Zbroji (o, o, &w);
+                }
+            Svi ostali znakovi:
+                Odbaci();
+    }
+\end{lstlisting}
+
+\newpage
+
+\begin{lstlisting}
+    A(o){
+        Nasljedno svojstvo o;
+        Lokalna varijabla q, w;
+        Ulaz.znak = Krajnje lijevi znak niza w;
+        if (Ulaz.znak != c)
+            Odbaci();
+        else {
+            B(&q, o);
+            Oduzmi(o, q, &z);       
+        }
+    }
+\end{lstlisting}
+
+\begin{lstlisting}
+    B(&q, o){
+        Izvedeno svojstvo q;
+        Nasljedno svojstvo o;
+        q = o + 2;
+        Ulaz.znak = Krajnje lijevi znak niza w;
+        if (Ulaz.znak != a)
+            Odbaci();
+        else {
+            Ulaz.znak = Krajnje lijevi znak niza w;
+            if (Ulaz.znak != c)
+                Odbaci();       
+        } 
+    }
+\end{lstlisting}
+\end{solution}
+
+\newpage
+
+\begin{problem}{2021}
+    Parsiramo $L$-atributnu prijevodnu gramatiku potisnim automatom. \\Neka je zadana sljedeća produkcija:  $$S_{n1, \,i1} \xrightarrow[]{} \{f\}_{n2, \,i2} \, a_x \, A_{i3} \, b_y \, \{h\}_{n3, \, n4, \,i4} \, B_{n5, \, n6,\,n7}$$
+    $$n2 \xleftarrow[]{} n1, \;  n3 \xleftarrow[]{} i2, \; n4 \xleftarrow[]{} x, \; (i1, \, n5) \xleftarrow[]{} i4, \; n6 \xleftarrow[]{} i3, \; n7 \xleftarrow[]{} y$$  gdje je $S$ početni nezavršni znak gramatike. Neka su elementi stoga, počevši od vrha prema dnu, indeksirani s brojevima 0, 1, 2, $\dots$ Pod pretpostavkom da se na stogu nalazi početna konfiguracija potisnog automata, što će biti zapisano unutar stoga na indeksu broj 9 nakon jednog koraka rada potisnog automata u kojem pročitamo ulazni završni znak $a$ i primijenimo zadanu produkciju?
+\end{problem}
+
+\begin{solution}
+    \noindent Unutar stoga na indeksu 9 zapisano je $i_4$ zbog pravila $n_5 \xleftarrow[]{} i_4$. \\
+        
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+    \hline
+    0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 \\
+    \hline
+    $A$ & $i_3$ & $b$ & $y$ & $\{h\}$ & $n_3$ & $n_4$ & $i_4$ & $b$ & $n_5$ \\
+    \hline
+    \end{tabular}
+\end{solution}
+
+\begin{comment}
+    
+\begin{problem}{2017}
+     Zadanu gramatiku pretvoriti u $L$-atributnu prijevodnu gramatiku s pojednostavljenim pravilima računanja vrijednosti svojstava.
+
+     \noindent $S_{a,\,b} \xrightarrow[]{} A_{c, \, d,\, e} \, b_f \, B_g$ \hfill
+        ako $(a = 0) \; a \xleftarrow[]{}$ učitaj broj od korisnika,
+        $c \xleftarrow[]{} 2\cdot a, \, d \xleftarrow[]{} \frac{a}{2}, \, b \xleftarrow[]{} (e^f + g)$ \\
+        $S_{a, \,b} \xrightarrow[]{} d_c$ \hfill
+        $b \xleftarrow[]{} c^a$ \\
+        $A_{a, \, b, \,c} \xrightarrow[]{} C_d \, A_{e, \,f, \,g} \, b_h$ \hfill
+        ako $(d = 0)$ onda $(e, \, f) \xleftarrow[]{} a$
+        inače $(e,\, f) \xleftarrow[]{} b, \, c \xleftarrow[]{} g - h $ \\
+        $A_{a, \,b, \,c} \xrightarrow[]{} B_d \, b_e$ \hfill
+        $c \xleftarrow[]{} a + b + d + e$ \\
+        $B_a \xleftarrow[]{} c_b \, S_{c, \,d} \,d_e$ \hfill
+        $c \xleftarrow[]{} \frac{1}{b}, \, a \xleftarrow[]{} d^2 + e$ \\
+        $B_a \xrightarrow[]{} \varepsilon$ \hfill
+        $a \xleftarrow[]{} 0$ \\
+        $C_a \xrightarrow[]{} a_b$ \hfill
+        $a \xleftarrow[]{} b$ \\
+        $C_a \xrightarrow[]{} e_b \,d_c$
+        \hfill $a \xleftarrow[]{} b \cdot c$
+\end{problem}
+\end{comment}
+
+
+
+\end{document}
